@@ -43,8 +43,9 @@ const HomeScreen = () => {
             {/* Navbar Inferior Mockup */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-around', borderTopWidth: 1, paddingTop: 10 }}>
                 <Button title="Home" onPress={() => console.log('Home')} />
-                <Button title="Student" onPress={() => navigateTo('/register')} />
+                <Button title="Student" onPress={() => navigateTo('/searchStudent')} />
                 <Button title="Professor" onPress={() => console.log('Prof')} />
+                <Button title="Subject" onPress={() => console.log('Prof')} />
             </View>
         </View>
     );
