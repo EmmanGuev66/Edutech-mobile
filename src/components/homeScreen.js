@@ -45,7 +45,7 @@ const HomeScreen = () => {
                 <Button title="Home" onPress={() => console.log('Home')} />
                 <Button title="Student" onPress={() => navigateTo('/searchStudent')} />
                 <Button title="Professor" onPress={() => console.log('Prof')} />
-                <Button title="Subject" onPress={() => console.log('Prof')} />
+                <Button title="Subject" onPress={() => navigateTo('/searchSubject')} />
             </View>
         </View>
     );
