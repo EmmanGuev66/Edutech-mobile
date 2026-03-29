@@ -44,7 +44,7 @@ const HomeScreen = () => {
             <View style={{ flexDirection: 'row', justifyContent: 'space-around', borderTopWidth: 1, paddingTop: 10 }}>
                 <Button title="Home" onPress={() => console.log('Home')} />
                 <Button title="Student" onPress={() => navigateTo('/searchStudent')} />
-                <Button title="Professor" onPress={() => console.log('Prof')} />
+                <Button title="Professor" onPress={() => navigateTo('/searchProfessor')} />
                 <Button title="Subject" onPress={() => navigateTo('/searchSubject')} />
             </View>
         </View>
