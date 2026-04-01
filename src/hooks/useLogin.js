@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
+import api from '../models/users';
 
 export const useLogin = () => {
     const [email, setEmail] = useState('');
@@ -9,6 +10,14 @@ export const useLogin = () => {
     const router = useRouter();
 
     const handleLogin = async () => {
+        //consumir api
+        const data = {
+            "email": email,
+            "passwor": password
+        }
+        const response = await api.post('/login');
+        console.log('response', response)
+
         // Validación campos vacíos
         if (email.trim() === '' || password.trim() === '') {
             Alert.alert('Error', 'Los campos son obligatorios');
