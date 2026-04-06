@@ -1,54 +1,104 @@
-import { Button, ScrollView, Text, View } from 'react-native';
-import { useHome } from '../hooks/useHome';
+import { LinearGradient } from "expo-linear-gradient";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import BottomNav from "../components/BottomNav";
+import { useHome } from "../hooks/useHome";
+import { styles } from "../styles/globalStyle";
 
 const HomeScreen = () => {
-    const { stats, activities, navigateTo } = useHome();
+  const { stats, activities, navigateTo } = useHome();
 
-    return (
-        <View style={{ flex: 1, padding: 20 }}>
-            {/* Header Mockup */}
-            <View style={{ alignItems: 'center', marginBottom: 20 }}>
-                <Text>[ LOGO EDU TECH ]</Text>
-                <Text style={{ fontSize: 22, fontWeight: 'bold' }}>EduTech Connect</Text>
-                <Text>School Management System</Text>
-            </View>
+  return (
+    <View style={styles.container}>
 
-            {/* Tarjetas de Estadísticas (Fila) */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 30 }}>
-                <View style={{ borderWidth: 1, padding: 10, alignItems: 'center', flex: 1, margin: 2 }}>
-                    <Text>{stats.students}</Text>
-                    <Text>Students</Text>
-                </View>
-                <View style={{ borderWidth: 1, padding: 10, alignItems: 'center', flex: 1, margin: 2 }}>
-                    <Text>{stats.professors}</Text>
-                    <Text>Professors</Text>
-                </View>
-                <View style={{ borderWidth: 1, padding: 10, alignItems: 'center', flex: 1, margin: 2 }}>
-                    <Text>{stats.subjects}</Text>
-                    <Text>Subjects</Text>
-                </View>
-            </View>
+      {/* Header */}
+      <Image
+        source={require("../../assets/images/logo.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
 
-            {/* Actividades Recientes */}
-            <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>Recent Activities</Text>
-            <ScrollView>
-                {activities.map(act => (
-                    <View key={act.id} style={{ padding: 15, backgroundColor: '#eee', marginBottom: 10 }}>
-                        <Text style={{ fontWeight: 'bold' }}>{act.title}</Text>
-                        <Text style={{ fontSize: 12 }}>{act.detail}</Text>
-                    </View>
-                ))}
-            </ScrollView>
+      <Text style={styles.title}>EduTech Connect</Text>
+      <Text style={styles.subtitle}>School Management System</Text>
 
-            {/* Navbar Inferior Mockup */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around', borderTopWidth: 1, paddingTop: 10 }}>
-                <Button title="Home" onPress={() => console.log('Home')} />
-                <Button title="Student" onPress={() => navigateTo('/searchStudent')} />
-                <Button title="Professor" onPress={() => navigateTo('/searchProfessor')} />
-                <Button title="Subject" onPress={() => navigateTo('/searchSubject')} />
-            </View>
-        </View>
-    );
+      {/* Stats */}
+      <View style={styles.statsRow}>
+
+        {/* Students */}
+        <TouchableOpacity
+          onPress={() => navigateTo("/searchStudent")}
+          style={{ flex: 1, marginHorizontal: 5 }}
+        >
+          <LinearGradient
+            colors={["#3b82f6", "#8b5cf6"]}
+            style={styles.statCardHome}
+          >
+            <Image
+              source={require("../../assets/images/student-card.png")}
+              style={styles.statImage}
+            />
+            <Text style={styles.statNumber}>{stats.students}</Text>
+            <Text style={styles.statLabel}>Students</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
+        {/* Professors */}
+        <TouchableOpacity
+          onPress={() => navigateTo("/searchProfessor")}
+          style={{ flex: 1, marginHorizontal: 5 }}
+        >
+          <LinearGradient
+            colors={["#3b82f6", "#8b5cf6"]}
+            style={styles.statCard}
+          >
+            <Image
+              source={require("../../assets/images/professor-card.png")}
+              style={styles.statImage}
+            />
+            <Text style={styles.statNumber}>{stats.professors}</Text>
+            <Text style={styles.statLabel}>Professors</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
+        {/* Subjects */}
+        <TouchableOpacity
+          onPress={() => navigateTo("/searchSubject")}
+          style={{ flex: 1, marginHorizontal: 5 }}
+        >
+          <LinearGradient
+            colors={["#3b82f6", "#8b5cf6"]}
+            style={styles.statCard}
+          >
+            <Image
+              source={require("../../assets/images/subject-card.png")}
+              style={styles.statImage}
+            />
+            <Text style={styles.statNumber}>{stats.subjects}</Text>
+            <Text style={styles.statLabel}>Subjects</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
+      </View>
+
+      {/* Activities */}
+      <Text style={styles.sectionTitle}>Recent Activities</Text>
+
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 100 }} 
+      >
+        {activities.map((act) => (
+          <View key={act.id} style={styles.activityCard}>
+            <Text style={styles.activityTitle}>{act.title}</Text>
+            <Text style={styles.activityDetail}>{act.detail}</Text>
+          </View>
+        ))}
+      </ScrollView>
+
+      {/* Navbar */}
+      <BottomNav current="home" navigateTo={navigateTo} />
+
+    </View>
+  );
 };
 
 export default HomeScreen;

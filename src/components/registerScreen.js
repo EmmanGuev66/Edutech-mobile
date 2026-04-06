@@ -1,6 +1,8 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useRegister } from '../hooks/useRegister';
+import { styles } from "../styles/globalStyle";
 
 const RegisterScreen = () => {
     const {
@@ -14,119 +16,107 @@ const RegisterScreen = () => {
     const router = useRouter();
 
     return (
-        <View style={styles.container}>
+    <View style={styles.container}>
 
-            {/* Avatar */}
-            <View style={styles.avatar} />
+      {/* Logo */}
+      <Image
+        source={require("../../assets/images/logo.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
 
-            {/* Línea */}
-            <View style={styles.line} />
+      {/* Card */}
+      <View style={styles.card}>
 
-            {/* Card */}
-            <View style={styles.card}>
+        <Text style={styles.cardTitle}>Create Account</Text>
 
-                <TextInput
-                    placeholder="Nombre Completo"
-                    value={name}
-                    onChangeText={setName}
-                    style={styles.input}
-                />
-
-                <TextInput
-                    placeholder="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    style={styles.input}
-                />
-
-                <TextInput
-                    placeholder="Password"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                    style={styles.input}
-                />
-
-                <TextInput
-                    placeholder="Confirm Password"
-                    value={confirmPassword}
-                    onChangeText={setConfirmPassword}
-                    secureTextEntry
-                    style={styles.input}
-                />
-
-                <TouchableOpacity style={styles.button} onPress={handleRegister}>
-                    <Text style={styles.buttonText}>Crear Cuenta</Text>
-                </TouchableOpacity>
-
-            </View>
-
-            {/* Volver a login */}
-            <TouchableOpacity onPress={() => router.replace('/')}>
-                <Text style={styles.registerText}>
-                    ¿Ya tienes cuenta? Inicia sesión
-                </Text>
-            </TouchableOpacity>
-
+        {/* Name */}
+        <View style={[styles.inputContainer, styles.inputNoGlow]}>
+          <Image
+            source={require("../../assets/images/user.png")}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            placeholder="Full Name"
+            placeholderTextColor="#aaa"
+            value={name}
+            onChangeText={setName}
+            style={styles.inputText}
+          />
         </View>
-    );
+
+        {/* Email */}
+        <View style={[styles.inputContainer, styles.inputNoGlow]}>
+          <Image
+            source={require("../../assets/images/email.png")}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            placeholder="Email"
+            placeholderTextColor="#aaa"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            style={styles.inputText}
+          />
+        </View>
+
+        {/* Password */}
+        <View style={[styles.inputContainer, styles.inputNoGlow]}>
+          <Image
+            source={require("../../assets/images/lock.png")}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor="#aaa"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={styles.inputText}
+          />
+        </View>
+
+        {/* Confirm Password */}
+        <View style={[styles.inputContainer, styles.inputNoGlow]}>
+          <Image
+            source={require("../../assets/images/lock.png")}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            placeholder="Confirm Password"
+            placeholderTextColor="#aaa"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            style={styles.inputText}
+          />
+        </View>
+
+        {/* Button */}
+        <TouchableOpacity style={styles.primaryButton} onPress={handleRegister}>
+          <LinearGradient
+            colors={["#3b82f6", "#8b5cf6"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.gradientButton}
+          >
+            <Text style={styles.primaryButtonText}>Create Account</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
+      </View>
+
+      {/* Link */}
+      <TouchableOpacity onPress={() => router.replace("/")}>
+        <Text style={styles.linkText}>
+          Already have an account?{" "}
+          <Text style={styles.linkHighlight}>Sign in</Text>
+        </Text>
+      </TouchableOpacity>
+
+    </View>
+  );
 };
 
 export default RegisterScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f2f2f2",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-
-  avatar: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    backgroundColor: "#ccc",
-    marginBottom: 15,
-  },
-
-  line: {
-    width: 120,
-    height: 2,
-    backgroundColor: "#aaa",
-    marginBottom: 20,
-  },
-
-  card: {
-    width: "100%",
-    backgroundColor: "#d9d9d9",
-    borderRadius: 20,
-    padding: 20,
-    gap: 12,
-  },
-
-  input: {
-    backgroundColor: "#eee",
-    borderRadius: 10,
-    padding: 12,
-  },
-
-  button: {
-    backgroundColor: "#bbb",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    marginTop: 10,
-  },
-
-  buttonText: {
-    fontWeight: "bold",
-  },
-
-  registerText: {
-    marginTop: 20,
-    color: "#555",
-  },
-});

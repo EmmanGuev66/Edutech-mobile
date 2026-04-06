@@ -1,6 +1,8 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useLogin } from "../hooks/useLogin";
+import { styles } from "../styles/globalStyle";
 
 const LoginScreen = () => {
   const { email, setEmail, password, setPassword, handleLogin } = useLogin();
@@ -8,41 +10,68 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      
-      {/* Avatar / Logo */}
-      <View style={styles.avatar} />
 
-      {/* Línea decorativa */}
-      <View style={styles.line} />
+      <Image
+        source={require("../../assets/images/logo.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+
+      <Text style={styles.title}>Welcome!</Text>
 
       {/* Card */}
       <View style={styles.card}>
-        
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          style={styles.input}
-        />
 
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          style={styles.input}
-        />
+        <Text style={styles.cardTitle}>Sign in</Text>
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+        {/* Email */}
+        <View style={[styles.inputContainer, styles.inputGlow]}>
+          <Image
+            source={require("../../assets/images/email.png")}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            placeholder="Email"
+            placeholderTextColor="#aaa"
+            value={email}
+            onChangeText={setEmail}
+            style={styles.inputText}
+          />
+        </View>
+
+        {/* Password */}
+        <View style={[styles.inputContainer, styles.inputGlow]}>
+          <Image
+            source={require("../../assets/images/lock.png")}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor="#aaa"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={styles.inputText}
+          />
+        </View>
+
+        <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
+          <LinearGradient
+            colors={["#3b82f6", "#8b5cf6"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.gradientButton}
+          >
+            <Text style={styles.primaryButtonText}>Sign in</Text>
+          </LinearGradient>
         </TouchableOpacity>
 
       </View>
 
-      {/* Registro */}
       <TouchableOpacity onPress={() => router.push("/register")}>
-        <Text style={styles.registerText}>
-          ¿No tienes cuenta? Regístrate
+        <Text style={styles.linkText}>
+          Don't have an account?{" "}
+          <Text style={styles.linkHighlight}>Sign up</Text>
         </Text>
       </TouchableOpacity>
 
@@ -52,58 +81,3 @@ const LoginScreen = () => {
 
 export default LoginScreen;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f2f2f2",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "#ccc",
-    marginBottom: 20,
-  },
-
-  line: {
-    width: 120,
-    height: 2,
-    backgroundColor: "#aaa",
-    marginBottom: 20,
-  },
-
-  card: {
-    width: "100%",
-    backgroundColor: "#d9d9d9",
-    borderRadius: 20,
-    padding: 20,
-    gap: 15,
-  },
-
-  input: {
-    backgroundColor: "#eee",
-    borderRadius: 10,
-    padding: 12,
-  },
-
-  button: {
-    backgroundColor: "#bbb",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    marginTop: 10,
-  },
-
-  buttonText: {
-    fontWeight: "bold",
-  },
-
-  registerText: {
-    marginTop: 20,
-    color: "#555",
-  },
-});
