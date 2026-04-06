@@ -74,7 +74,6 @@ export const styles = StyleSheet.create({
     width: 20,
     height: 20,
     marginRight: 10,
-
   },
 
   inputText: {
@@ -121,7 +120,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
-    },
+  },
 
   statCard: {
     flex: 1,
@@ -166,28 +165,6 @@ export const styles = StyleSheet.create({
     fontSize: 12,
   },
 
-  navContainer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-
-    paddingVertical: 24,
-    backgroundColor: "#000",
-
-    borderTopWidth: 1,
-    borderColor: "#1e293b",
- },
-
-  navIcon: {
-    width: 35,
-    height: 35,
-  },
-
   statImage: {
     width: 90,
     height: 90,
@@ -201,7 +178,7 @@ export const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 14,
     minHeight: 70,
-    width: "100%", 
+    width: "100%",
   },
 
   avatar: {
@@ -257,5 +234,5 @@ export const styles = StyleSheet.create({
     borderRadius: 14, 
     padding: 12, 
     alignItems: "center", 
- },
+  },
 });

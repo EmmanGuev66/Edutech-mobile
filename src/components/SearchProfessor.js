@@ -1,108 +1,70 @@
 import { router } from "expo-router";
-import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import BottomNav from "../components/BottomNav";
 import { useSearchProfessor } from "../hooks/useSearchProfessor";
+import { styles } from "../styles/globalStyle";
 
 const searchProfessorScreen = () => {
   const { professors } = useSearchProfessor();
 
   return (
-    <View style={styles.container}>
+    <View style={styles.containerList}>
+
       <Text style={styles.title}>Professors</Text>
 
-      <TextInput
-        placeholder="Search Professor"
-        placeholderTextColor="#aaa"
-        style={styles.input}
-      />
+      <View style={[styles.inputContainer, styles.inputNoGlow, { marginBottom: 16 }]}>
+        <Image
+          source={require("../../assets/images/search.png")}
+          style={{ width: 18, height: 18, marginRight: 8 }}
+        />
+        <TextInput
+          placeholder="Search professor"
+          placeholderTextColor="#aaa"
+          style={styles.inputText}
+        />
+      </View>
 
       <FlatList
         data={professors}
         keyExtractor={(item) => item.id}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ gap: 12, paddingBottom: 120 }}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <View style={styles.listCard}>
             <Image source={{ uri: item.avatar }} style={styles.avatar} />
 
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, justifyContent: "center" }}>
               <Text style={styles.name}>{item.name}</Text>
               <Text style={styles.email}>{item.email}</Text>
             </View>
 
-            <TouchableOpacity style={styles.editBtn} onPress={() => router.push("/editProfessor")}>
-              <Text style={styles.editText}>Edit</Text>
+            <TouchableOpacity
+              style={styles.viewBtn}
+              onPress={() => router.push("/viewProfessor")}
+            >
+              <Text style={styles.viewText}>View</Text>
             </TouchableOpacity>
           </View>
         )}
-        contentContainerStyle={{ gap: 12 }}
       />
 
-      <TouchableOpacity style={styles.fab}>
-        <Text style={{ color: "#fff", fontSize: 24 }} onPress={() => router.push("/addProfessor")}>+</Text>
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => router.push("/addProfessor")}
+      >
+        <Image
+          source={require("../../assets/images/add.png")}
+          style={styles.fabImage}
+        />
       </TouchableOpacity>
+
+      <BottomNav
+        current="searchProfessor"
+        navigateTo={(route) => router.push(route)}
+      />
+
     </View>
   );
 };
-
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-    padding: 16,
-  },
-  title: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 12,
-  },
-  input: {
-    backgroundColor: "#1e1e2f",
-    borderRadius: 10,
-    padding: 10,
-    color: "#fff",
-    marginBottom: 16,
-  },
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#4f5dff",
-    padding: 12,
-    borderRadius: 12,
-  },
-  avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 50,
-    marginRight: 10,
-  },
-  name: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  email: {
-    color: "#ddd",
-    fontSize: 12,
-  },
-  editBtn: {
-    backgroundColor: "#a855f7",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-  },
-  editText: {
-    color: "#fff",
-    fontSize: 12,
-  },
-  fab: {
-    position: "absolute",
-    bottom: 30,
-    right: 20,
-    backgroundColor: "#a855f7",
-    width: 55,
-    height: 55,
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default searchProfessorScreen;

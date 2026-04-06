@@ -1,5 +1,4 @@
-import { Image, TouchableOpacity, View } from "react-native";
-import { styles } from "../styles/globalStyle";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 const BottomNav = ({ current, navigateTo }) => {
   return (
@@ -54,3 +53,27 @@ const BottomNav = ({ current, navigateTo }) => {
 };
 
 export default BottomNav;
+
+const styles = StyleSheet.create({
+  navContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+
+    paddingVertical: 24,
+    backgroundColor: "#000",
+
+    borderTopWidth: 1,
+    borderColor: "#1e293b",
+  },
+
+  navIcon: {
+    width: 35,
+    height: 35,
+  },
+});

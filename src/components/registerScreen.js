@@ -1,6 +1,6 @@
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from 'expo-router';
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { GradientButton } from "../components/GradientButton";
 import { useRegister } from '../hooks/useRegister';
 import { styles } from "../styles/globalStyle";
 
@@ -93,17 +93,11 @@ const RegisterScreen = () => {
           />
         </View>
 
-        {/* Button */}
-        <TouchableOpacity style={styles.primaryButton} onPress={handleRegister}>
-          <LinearGradient
-            colors={["#3b82f6", "#8b5cf6"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.gradientButton}
-          >
-            <Text style={styles.primaryButtonText}>Create Account</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        <GradientButton
+          title="Create Account"
+          onPress={handleRegister}
+          style={styles.primaryButton}
+        />
 
       </View>
 

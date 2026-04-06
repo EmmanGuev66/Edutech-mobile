@@ -103,13 +103,11 @@ export const styles = StyleSheet.create({
 
   deleteBtn: {
     flex: 1,
-    height: 48,
     backgroundColor: "#1e293b",
     borderRadius: 12,
     marginLeft: 8,
     justifyContent: "center",
     alignItems: "center",
-    
   },
 
   btnText: {
@@ -120,6 +118,7 @@ export const styles = StyleSheet.create({
   deleteText: {
     color: "#ef4444",
     fontWeight: "bold",
+    fontSize: 16, 
   },
 
   mainCard: {
@@ -152,11 +151,12 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
+    paddingHorizontal: 12,
   },
 
   iconButton: {
-    width: 18,
-    height: 18,
-    resizeMode: "contain",
-  },
+  width: 18,
+  height: 18,
+  resizeMode: "contain",
+},
 });

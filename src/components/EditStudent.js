@@ -1,6 +1,6 @@
-import { LinearGradient } from "expo-linear-gradient";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import BottomNav from "../components/BottomNav";
+import { GradientButton } from "../components/GradientButton";
 import { useEditStudent } from "../hooks/useEditStudent";
 import { styles } from "../styles/editAddStyle";
 
@@ -63,19 +63,11 @@ const EditStudentScreen = () => {
 
       </View>
 
-      {/* SAVE */}
-      <TouchableOpacity style={styles.primaryButton}>
-        <LinearGradient
-          colors={["#3b82f6", "#8b5cf6"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.gradientButton}
-        >
-          <Text style={styles.saveText}>Save student</Text>
-        </LinearGradient>
-      </TouchableOpacity>
-      
-      
+      <GradientButton
+          title="Save student"
+          //onPress={handleLogin}
+          style={styles.primaryButton}
+      />
 
       {/* NAVBAR */}
       <BottomNav current="searchStudent" navigateTo={navigateTo} />

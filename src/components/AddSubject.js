@@ -1,18 +1,26 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import BottomNav from "../components/BottomNav";
+import { GradientButton } from "../components/GradientButton";
 import { useAddSubject } from "../hooks/useAddSubject";
+import { styles } from "../styles/editAddStyle";
 
 const AddSubjectScreen = () => {
-  const { subject } = useAddSubject();
+  const { subject, setSubject, professors } = useAddSubject();
+  const router = useRouter();
+
+  const [open, setOpen] = useState(false);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Add subjects</Text>
-
+      <Text style={styles.title}>Add subject</Text>
 
       <View style={styles.card}>
         <Text style={styles.label}>ID</Text>
         <TextInput
           value={subject.id}
+          onChangeText={(text) => setSubject({ ...subject, id: text })}
           style={styles.input}
           placeholderTextColor="#aaa"
         />
@@ -20,78 +28,57 @@ const AddSubjectScreen = () => {
         <Text style={styles.label}>Subject name</Text>
         <TextInput
           value={subject.name}
+          onChangeText={(text) => setSubject({ ...subject, name: text })}
           style={styles.input}
           placeholderTextColor="#aaa"
         />
 
         <Text style={styles.label}>Teacher</Text>
-        <TextInput
-          value={subject.teacher}
-          style={styles.input}
-          placeholderTextColor="#aaa"
-        />
+
+        <TouchableOpacity
+          style={styles.select}
+          onPress={() => setOpen(!open)}
+        >
+          <View style={styles.selectRow}>
+            <Text style={subject.teacher ? styles.selectText : styles.placeholder}>
+              {subject.teacher || "Select a teacher"}
+            </Text>
+
+            <Text style={styles.arrow}>{open ? "▲" : "▼"}</Text>
+          </View>
+        </TouchableOpacity>
+
+        {open && (
+          <View style={styles.dropdown}>
+            {professors.map((prof) => (
+              <TouchableOpacity
+                key={prof.id}
+                style={styles.dropdownItem}
+                onPress={() => {
+                  setSubject({ ...subject, teacher: prof.name });
+                  setOpen(false);
+                }}
+              >
+                <Text style={styles.dropdownText}>{prof.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
       </View>
+      
+      <GradientButton
+        title="Save subject"
+        //onPress={handleLogin}
+        style={styles.primaryButton}
+        disabled={!subject.teacher}
+      /> 
 
-
-      {/* Button */}
-      <TouchableOpacity style={styles.saveBtn}>
-        <Text style={styles.saveText}>Save subject</Text>
-      </TouchableOpacity>
+      <BottomNav
+        current="searchSubject"
+        navigateTo={(route) => router.push(route)}
+      />
     </View>
   );
 };
 
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-    padding: 16,
-  },
-  header: {
-    color: "#c084fc",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  card: {
-    backgroundColor: "#3b4bff",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-  },
-  label: {
-    color: "#fff",
-    marginBottom: 4,
-    fontSize: 12,
-  },
-  input: {
-    backgroundColor: "#2a2a5a",
-    borderRadius: 8,
-    padding: 10,
-    color: "#fff",
-    marginBottom: 12,
-  },
-  select: {
-    backgroundColor: "#2a2a5a",
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 12,
-  },
-  selectText: {
-    color: "#fff",
-  },
-  placeholder: {
-    color: "#aaa",
-  },
-  saveBtn: {
-    backgroundColor: "#7c3aed",
-    padding: 14,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  saveText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-});
 export default AddSubjectScreen;

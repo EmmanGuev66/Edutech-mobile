@@ -59,7 +59,6 @@ const HomeScreen = () => {
           </LinearGradient>
         </TouchableOpacity>
 
-        {/* Subjects */}
         <TouchableOpacity
           onPress={() => navigateTo("/searchSubject")}
           style={{ flex: 1, marginHorizontal: 5 }}

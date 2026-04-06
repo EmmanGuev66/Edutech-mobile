@@ -1,6 +1,6 @@
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { GradientButton } from "../components/GradientButton";
 import { useLogin } from "../hooks/useLogin";
 import { styles } from "../styles/globalStyle";
 
@@ -55,16 +55,11 @@ const LoginScreen = () => {
           />
         </View>
 
-        <TouchableOpacity style={styles.primaryButton} onPress={handleLogin}>
-          <LinearGradient
-            colors={["#3b82f6", "#8b5cf6"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.gradientButton}
-          >
-            <Text style={styles.primaryButtonText}>Sign in</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        <GradientButton
+          title="Sign in"
+          onPress={handleLogin}
+          style={styles.primaryButton}
+        />
 
       </View>
 

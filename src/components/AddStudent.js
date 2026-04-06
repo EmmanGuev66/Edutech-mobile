@@ -1,6 +1,6 @@
-import { LinearGradient } from "expo-linear-gradient";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import BottomNav from "../components/BottomNav";
+import { GradientButton } from "../components/GradientButton";
 import { useAddStudent } from "../hooks/useAddStudent";
 import { styles } from "../styles/editAddStyle";
 
@@ -18,10 +18,8 @@ const AddStudentScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Add student</Text>
 
-      {/* CARD */}
       <View style={styles.card}>
 
-        {/* Photo URL */}
         <Text style={styles.label}>Photo URL</Text>
         <TextInput
           placeholder="https://..."
@@ -31,7 +29,6 @@ const AddStudentScreen = () => {
           style={styles.input}
         />
 
-        {/* NAME */}
         <Text style={styles.label}>Full name</Text>
         <TextInput
           placeholder="Enter name"
@@ -41,7 +38,6 @@ const AddStudentScreen = () => {
           style={styles.input}
         />
 
-        {/* ID */}
         <Text style={styles.label}>ID</Text>
         <TextInput
           placeholder="Enter ID"
@@ -51,7 +47,6 @@ const AddStudentScreen = () => {
           style={styles.input}
         />
 
-        {/* EMAIL */}
         <Text style={styles.label}>Email</Text>
         <TextInput
           placeholder="Enter email"
@@ -61,7 +56,6 @@ const AddStudentScreen = () => {
           style={styles.input}
         />
 
-        {/* SUBJECTS MULTI SELECT */}
         <Text style={styles.label}>Subjects</Text>
 
         <View style={styles.subjectContainer}>
@@ -92,20 +86,14 @@ const AddStudentScreen = () => {
 
       </View>
 
-      {/* SAVE BUTTON (GRADIENT) */}
-      <TouchableOpacity style={styles.primaryButton}>
-        <LinearGradient
-          colors={["#3b82f6", "#8b5cf6"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.gradientButton}
-        >
-          <Text style={styles.saveText}>Add student</Text>
-        </LinearGradient>
-      </TouchableOpacity>
+      <GradientButton
+          title="Save student"
+          //onPress={handleLogin}
+          style={styles.primaryButton}
+        />
 
       {/* NAVBAR */}
-      <BottomNav current="student" navigateTo={navigateTo} />
+      <BottomNav current="searchStudent" navigateTo={navigateTo} />
 
     </View>
   );

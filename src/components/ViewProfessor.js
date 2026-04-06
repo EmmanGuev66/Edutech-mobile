@@ -7,38 +7,38 @@ import idIcon from "../../assets/images/id.png";
 import subjectIcon from "../../assets/images/subject2.png";
 import BottomNav from "../components/BottomNav";
 import { GradientButton } from "../components/GradientButton";
-import { useViewStudent } from "../hooks/useViewStudent";
+import { useViewProfessor } from "../hooks/useViewProfessor";
 import { styles } from "../styles/viewStyle";
 import { ConfirmDelete } from "./deletePopUp";
 
-export const ViewStudent = () => {
-  const { student, onDelete } = useViewStudent();
+export const ViewProfessor = () => {
+  const { professor, onDelete } = useViewProfessor();
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Student's Information</Text>
+      <Text style={styles.header}>Professor's Information</Text>
 
       <View style={styles.mainCard}>
         
         <View style={styles.card}>
           <View style={styles.profileRow}>
-            <Image source={{ uri: student.avatar }} style={styles.avatar} />
+            <Image source={{ uri: professor.avatar }} style={styles.avatar} />
 
             <View>
-              <Text style={styles.name}>{student.name}</Text>
-              <Text style={styles.email}>{student.email}</Text>
+              <Text style={styles.name}>{professor.name}</Text>
+              <Text style={styles.email}>{professor.email}</Text>
             </View>
           </View>
         </View>
 
-        <Text style={styles.sectionTitle}>Student information</Text>
+        <Text style={styles.sectionTitle}>Professor information</Text>
 
         <View style={styles.infoBox}>
             <View style={styles.row}>
                 <Image source={idIcon} style={styles.iconSmall} />
-                <Text style={styles.label}>ID: {student.id}</Text>
+                <Text style={styles.label}>ID: {professor.id}</Text>
             </View>
         </View>
 
@@ -49,7 +49,7 @@ export const ViewStudent = () => {
           </View>
 
           <View style={styles.subjectContainer}>
-            {student.subjects.map((subj, index) => (
+            {professor.subjects.map((subj, index) => (
               <View key={index} style={styles.subjectChipActive}>
                 <Text style={styles.subjectTextActive}>{subj}</Text>
               </View>
@@ -62,7 +62,7 @@ export const ViewStudent = () => {
           <GradientButton
             title="Edit student"
             icon={editIcon}
-            onPress={() => router.push("/editStudent")}
+            onPress={() => router.push("/editProfessor")}
             style={styles.primaryButton}
           />
 
@@ -72,7 +72,7 @@ export const ViewStudent = () => {
           >
             <View style={styles.buttonContent}>
                 <Image source={deleteIcon} style={styles.iconButton} />
-                <Text style={styles.deleteText}>Delete student</Text>
+                <Text style={[styles.deleteText, { fontSize: 13 }]}>Delete professor</Text>
             </View>
           </TouchableOpacity>
 
@@ -86,11 +86,11 @@ export const ViewStudent = () => {
           setShowModal(false);
           onDelete();
         }}
-        title="Delete student?"
-        description={`Are you sure you want to delete ${student.name}?`}
+        title="Delete professor?"
+        description={`Are you sure you want to delete ${professor.name}?`}
       />
 
-        <BottomNav current="searchStudent" navigateTo={(route) => router.push(route)}/>
+        <BottomNav current="searchProfessor" navigateTo={(route) => router.push(route)}/>
 
     </View>
   );
