@@ -1,11 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
 class StorageService {
 
-    //REGEX
+    static KEYS = {
+        TOKEN: "user_token",
+        USER: "user_data"
+    };
+
     static patterns = {
-        email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        email: /^ad\d+@school\.com$/,
         password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
     };
 
@@ -13,61 +17,46 @@ class StorageService {
         return this.patterns[type]?.test(value) || false;
     }
 
-    //ASYNC STORAGE (NO sensible)
     static async setItem(key, value) {
         try {
             const stringValue =
-                typeof value === 'object'
+                typeof value === "object"
                     ? JSON.stringify(value)
                     : String(value);
 
             await AsyncStorage.setItem(key, stringValue);
         } catch (error) {
-            console.error('Error guardando en AsyncStorage', error);
+            console.error("Error guardando", error);
         }
     }
 
     static async getItem(key) {
         try {
             const value = await AsyncStorage.getItem(key);
-
-            if (value === null) return null;
-
-            try {
-                return JSON.parse(value);
-            } catch {
-                return value;
-            }
-        } catch (error) {
-            console.error('Error obteniendo de AsyncStorage', error);
+            return value ? JSON.parse(value) : null;
+        } catch {
             return null;
         }
     }
 
-    // 🔐 SECURE STORE (sensible)
     static async saveToken(key, token) {
-        try {
-            await SecureStore.setItemAsync(key, token);
-        } catch (error) {
-            console.error('Error en Secure Storage', error);
-        }
+        await SecureStore.setItemAsync(key, token);
     }
 
     static async getToken(key) {
-        try {
-            return await SecureStore.getItemAsync(key);
-        } catch (error) {
-            console.error('Error obteniendo token', error);
-            return null;
-        }
+        return await SecureStore.getItemAsync(key);
     }
 
     static async removeToken(key) {
-        try {
-            await SecureStore.deleteItemAsync(key);
-        } catch (error) {
-            console.error('Error eliminando token', error);
-        }
+        await SecureStore.deleteItemAsync(key);
+    }
+
+    static async saveUser(user) {
+        await this.setItem(this.KEYS.USER, user);
+    }
+
+    static async getUser() {
+        return await this.getItem(this.KEYS.USER);
     }
 }
 

@@ -1,26 +1,64 @@
+import { useEffect, useState } from "react";
+import StorageService from "../helpers/StorageService";
+import api from "../models/api";
+
 export const useSearchStudent = () => {
-  const students = [
-    {
-      id: "1",
-      name: "Laura Gomez",
-      email: "gomez.laura@utr.com",
-      avatar: "https://i.pinimg.com/736x/ae/32/35/ae32350bccaf286509ffa3bcd989c906.jpg",
-    },
-    {
-      id: "2",
-      name: "Carlos Ruiz",
-      email: "ruiz.carlos@utr.com",
-      avatar: "https://i.pinimg.com/webp/736x/3f/84/00/3f8400984dab2717615971965e74e6c2.webp",
-    },
-    {
-      id: "3",
-      name: "Sofia Lopez",
-      email: "lopez.sofia@utr.com",
-      avatar: "https://i.pinimg.com/736x/c9/4e/d1/c94ed1e8a037676fe2b3348c1fe79b65.jpg",
-    },
-  ];
+  const [students, setStudents] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
+
+  const fetchStudents = async () => {
+    try {
+      const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
+
+      const response = await api.get("/getAllStudents", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      let data = response.data;
+
+      if (Array.isArray(data)) {
+        // ok
+      } else if (Array.isArray(data.students)) {
+        data = data.students;
+      } else if (Array.isArray(data.data)) {
+        data = data.data;
+      } else {
+        throw new Error("Unexpected response format");
+      }
+
+      const mapped = data
+        .filter(item => item.ID || item.id) // evita registros sin ID (causa del 404)
+        .map((item) => ({
+          id: item.ID || item.id,
+          name: item.Name || item.name || "No name",
+          email: item.Email || item.email,
+          avatar: item.Photo || "https://via.placeholder.com/100"
+        }));
+
+      setStudents(mapped);
+      setFilteredStudents(mapped);
+
+    } catch (error) {
+      console.log("FULL ERROR:", error);
+    }
+  };
+
+  const searchStudent = (text) => {
+    const filtered = students.filter((s) =>
+      s.name.toLowerCase().includes(text.toLowerCase())
+    );
+
+    setFilteredStudents(filtered);
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
 
   return {
-    students,
+    students: filteredStudents,
+    searchStudent
   };
 };

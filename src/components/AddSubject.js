@@ -7,7 +7,7 @@ import { useAddSubject } from "../hooks/useAddSubject";
 import { styles } from "../styles/editAddStyle";
 
 const AddSubjectScreen = () => {
-  const { subject, setSubject, professors } = useAddSubject();
+  const { subject, setSubject, professors, onSave, loading } = useAddSubject();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -22,6 +22,7 @@ const AddSubjectScreen = () => {
           value={subject.id}
           onChangeText={(text) => setSubject({ ...subject, id: text })}
           style={styles.input}
+          placeholder="MAT101"
           placeholderTextColor="#aaa"
         />
 
@@ -30,6 +31,16 @@ const AddSubjectScreen = () => {
           value={subject.name}
           onChangeText={(text) => setSubject({ ...subject, name: text })}
           style={styles.input}
+          placeholder="Math"
+          placeholderTextColor="#aaa"
+        />
+
+        <Text style={styles.label}>Photo URL</Text>
+        <TextInput
+          value={subject.photo}
+          onChangeText={(text) => setSubject({ ...subject, photo: text })}
+          style={styles.input}
+          placeholder="https://example.com/image.jpg"
           placeholderTextColor="#aaa"
         />
 
@@ -41,9 +52,12 @@ const AddSubjectScreen = () => {
         >
           <View style={styles.selectRow}>
             <Text style={subject.teacher ? styles.selectText : styles.placeholder}>
-              {subject.teacher || "Select a teacher"}
+              {
+                subject.teacher
+                  ? professors.find(p => p.id === subject.teacher)?.name
+                  : "Select a teacher"
+              }
             </Text>
-
             <Text style={styles.arrow}>{open ? "▲" : "▼"}</Text>
           </View>
         </TouchableOpacity>
@@ -55,7 +69,7 @@ const AddSubjectScreen = () => {
                 key={prof.id}
                 style={styles.dropdownItem}
                 onPress={() => {
-                  setSubject({ ...subject, teacher: prof.name });
+                  setSubject({ ...subject, teacher: prof.id });
                   setOpen(false);
                 }}
               >
@@ -65,13 +79,13 @@ const AddSubjectScreen = () => {
           </View>
         )}
       </View>
-      
+
       <GradientButton
-        title="Save subject"
-        //onPress={handleLogin}
+        title={loading ? "Saving..." : "Save subject"}
+        onPress={onSave}
         style={styles.primaryButton}
         disabled={!subject.teacher}
-      /> 
+      />
 
       <BottomNav
         current="searchSubject"

@@ -1,5 +1,7 @@
 import { useRouter } from 'expo-router';
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import { Image, Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { GradientButton } from "../components/GradientButton";
 import { useRegister } from '../hooks/useRegister';
 import { styles } from "../styles/globalStyle";
@@ -10,107 +12,124 @@ const RegisterScreen = () => {
         email, setEmail,
         password, setPassword,
         confirmPassword, setConfirmPassword,
-        handleRegister
+        handleRegister,
+        loading
     } = useRegister();
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const router = useRouter();
 
     return (
-    <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAwareScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          enableOnAndroid
+          extraScrollHeight={20}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.container}>
 
-      {/* Logo */}
-      <Image
-        source={require("../../assets/images/logo.png")}
-        style={styles.logo}
-        resizeMode="contain"
-      />
+            <Image
+              source={require("../../assets/images/logo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
 
-      {/* Card */}
-      <View style={styles.card}>
+            <View style={styles.card}>
 
-        <Text style={styles.cardTitle}>Create Account</Text>
+              <Text style={styles.cardTitle}>Create Account</Text>
 
-        {/* Name */}
-        <View style={[styles.inputContainer, styles.inputNoGlow]}>
-          <Image
-            source={require("../../assets/images/user.png")}
-            style={styles.inputIcon}
-          />
-          <TextInput
-            placeholder="Full Name"
-            placeholderTextColor="#aaa"
-            value={name}
-            onChangeText={setName}
-            style={styles.inputText}
-          />
-        </View>
+              <View style={[styles.inputContainer, styles.inputNoGlow]}>
+                <Image
+                  source={require("../../assets/images/user.png")}
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  placeholder="Full Name"
+                  placeholderTextColor="#aaa"
+                  value={name}
+                  onChangeText={setName}
+                  style={styles.inputText}
+                />
+              </View>
 
-        {/* Email */}
-        <View style={[styles.inputContainer, styles.inputNoGlow]}>
-          <Image
-            source={require("../../assets/images/email.png")}
-            style={styles.inputIcon}
-          />
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor="#aaa"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            style={styles.inputText}
-          />
-        </View>
+              <View style={[styles.inputContainer, styles.inputNoGlow]}>
+                <Image
+                  source={require("../../assets/images/email.png")}
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  placeholder="ad1234@school.com"
+                  placeholderTextColor="#aaa"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  style={styles.inputText}
+                />
+              </View>
 
-        {/* Password */}
-        <View style={[styles.inputContainer, styles.inputNoGlow]}>
-          <Image
-            source={require("../../assets/images/lock.png")}
-            style={styles.inputIcon}
-          />
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor="#aaa"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            style={styles.inputText}
-          />
-        </View>
+              <View style={[styles.inputContainer, styles.inputNoGlow]}>
+                <Image
+                  source={require("../../assets/images/lock.png")}
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  placeholder="Password"
+                  placeholderTextColor="#aaa"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  style={styles.inputText}
+                />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                  <Text style={{ color: "#007AFF", marginLeft: 10 }}>
+                    {showPassword ? "Hide" : "View"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
-        {/* Confirm Password */}
-        <View style={[styles.inputContainer, styles.inputNoGlow]}>
-          <Image
-            source={require("../../assets/images/lock.png")}
-            style={styles.inputIcon}
-          />
-          <TextInput
-            placeholder="Confirm Password"
-            placeholderTextColor="#aaa"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry
-            style={styles.inputText}
-          />
-        </View>
+              <View style={[styles.inputContainer, styles.inputNoGlow]}>
+                <Image
+                  source={require("../../assets/images/lock.png")}
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  placeholder="Confirm Password"
+                  placeholderTextColor="#aaa"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry={!showConfirm}
+                  style={styles.inputText}
+                />
+                <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
+                  <Text style={{ color: "#007AFF", marginLeft: 10 }}>
+                    {showConfirm ? "Hide" : "View"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
-        <GradientButton
-          title="Create Account"
-          onPress={handleRegister}
-          style={styles.primaryButton}
-        />
+              <GradientButton
+                title={loading ? "Creating..." : "Create Account"}
+                onPress={handleRegister}
+                style={styles.primaryButton}
+              />
 
-      </View>
+            </View>
 
-      {/* Link */}
-      <TouchableOpacity onPress={() => router.replace("/")}>
-        <Text style={styles.linkText}>
-          Already have an account?{" "}
-          <Text style={styles.linkHighlight}>Sign in</Text>
-        </Text>
-      </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.replace("/")}>
+              <Text style={styles.linkText}>
+                Already have an account?{" "}
+                <Text style={styles.linkHighlight}>Sign in</Text>
+              </Text>
+            </TouchableOpacity>
 
-    </View>
-  );
+          </View>
+        </KeyboardAwareScrollView>
+      </TouchableWithoutFeedback>
+    );
 };
 
 export default RegisterScreen;

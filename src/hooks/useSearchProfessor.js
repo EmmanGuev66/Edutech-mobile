@@ -1,26 +1,63 @@
+import { useEffect, useState } from "react";
+import StorageService from "../helpers/StorageService";
+import api from "../models/api";
+
 export const useSearchProfessor = () => {
-  const professors = [
-    {
-      id: "1",
-      name: "Ms Honey",
-      email: "gomez.laura@utr.com",
-      avatar: "https://i.pinimg.com/webp/1200x/67/b3/2e/67b32e2382cf5fe7e67602ee449b35e9.webp",
-    },
-    {
-      id: "2",
-      name: "Carlos Ruiz",
-      email: "ruiz.carlos@utr.com",
-      avatar: "https://i.pinimg.com/webp/1200x/65/3b/2d/653b2de6f248d3d0a0d5b591b0bcb8f4.webp",
-    },
-    {
-      id: "3",
-      name: "Sofia Lopez",
-      email: "lopez.sofia@utr.com",
-      avatar: "https://i.pinimg.com/webp/1200x/02/b7/37/02b7376a5b7f511f83a38941c089cdad.webp",
-    },
-  ];
+  const [professors, setProfessors] = useState([]);
+  const [filteredProfessors, setFilteredProfessors] = useState([]);
+
+  const fetchProfessors = async () => {
+    try {
+      const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
+
+      const response = await api.get("/getAllTeachers", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      let data = response.data;
+
+      if (Array.isArray(data)) {
+      } else if (Array.isArray(data.teachers)) {
+        data = data.teachers;
+      } else if (Array.isArray(data.data)) {
+        data = data.data;
+      } else {
+        throw new Error("Unexpected response format");
+      }
+
+      const mapped = data
+        .filter(item => item.ID || item.id)
+        .map((item) => ({
+          id: item.ID || item.id,
+          name: item.Name || item.name || "No name",
+          email: item.Email || item.email,
+          avatar: item.Photo || "https://via.placeholder.com/100"
+        }));
+
+      setProfessors(mapped);
+      setFilteredProfessors(mapped);
+
+    } catch (error) {
+      console.log("FULL ERROR:", error);
+    }
+  };
+
+  const searchProfessor = (text) => {
+    const filtered = professors.filter((p) =>
+      p.name.toLowerCase().includes(text.toLowerCase())
+    );
+
+    setFilteredProfessors(filtered);
+  };
+
+  useEffect(() => {
+    fetchProfessors();
+  }, []);
 
   return {
-    professors,
+    professors: filteredProfessors,
+    searchProfessor
   };
 };

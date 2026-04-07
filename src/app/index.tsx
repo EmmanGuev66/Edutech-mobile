@@ -1,5 +1,5 @@
-import HomeScreen from "../components/homeScreen";
+import LoginScreen from "../components/loginScreen";
 
 export default function Index() {
-  return <HomeScreen />;
+  return <LoginScreen />;
 }

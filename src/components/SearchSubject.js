@@ -4,8 +4,8 @@ import BottomNav from "../components/BottomNav";
 import { useSearchSubject } from "../hooks/useSearchSubject";
 import { styles } from "../styles/globalStyle";
 
-const searchSubjectScreen = () => {
-  const { subjects } = useSearchSubject();
+const SearchSubjectScreen = () => {
+  const { subjects, searchSubject } = useSearchSubject();
 
   return (
     <View style={styles.containerList}>
@@ -21,12 +21,15 @@ const searchSubjectScreen = () => {
           placeholder="Search subject"
           placeholderTextColor="#aaa"
           style={styles.inputText}
+          onChangeText={searchSubject}
         />
       </View>
 
       <FlatList
         data={subjects}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) =>
+          item.id ? item.id.toString() : index.toString()
+        }
         style={{ flex: 1 }}
         contentContainerStyle={{ gap: 12, paddingBottom: 120 }}
         renderItem={({ item }) => (
@@ -39,7 +42,12 @@ const searchSubjectScreen = () => {
 
             <TouchableOpacity
               style={styles.viewBtn}
-              onPress={() => router.push("/viewSubject")}
+              onPress={() =>
+                router.push({
+                  pathname: "/viewSubject",
+                  params: { id: item.id }
+                })
+              }
             >
               <Text style={styles.viewText}>View</Text>
             </TouchableOpacity>
@@ -66,4 +74,4 @@ const searchSubjectScreen = () => {
   );
 };
 
-export default searchSubjectScreen;
+export default SearchSubjectScreen;

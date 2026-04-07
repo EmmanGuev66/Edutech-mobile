@@ -6,7 +6,7 @@ import { useEditProfessor } from "../hooks/useEditProfessor";
 import { styles } from "../styles/editAddStyle";
 
 const EditProfessorScreen = () => {
-  const { professor, setProfessor, onSave, } = useEditProfessor();
+  const { professor, setProfessor, onSave } = useEditProfessor();
   const router = useRouter();
 
   return (
@@ -19,6 +19,7 @@ const EditProfessorScreen = () => {
           value={professor.name}
           onChangeText={(text) => setProfessor({ ...professor, name: text })}
           style={styles.input}
+          placeholder="Enter name"
           placeholderTextColor="#aaa"
         />
 
@@ -27,14 +28,24 @@ const EditProfessorScreen = () => {
           value={professor.email}
           onChangeText={(text) => setProfessor({ ...professor, email: text })}
           style={styles.input}
+          placeholder="Enter email"
+          placeholderTextColor="#aaa"
+        />
+
+        <Text style={styles.label}>Photo URL</Text>
+        <TextInput
+          value={professor.photo}
+          onChangeText={(text) => setProfessor({ ...professor, photo: text })}
+          style={styles.input}
+          placeholder="https://..."
           placeholderTextColor="#aaa"
         />
       </View>
 
       <GradientButton
-          title="Save professor"
-          //onPress={handleLogin}
-          style={styles.primaryButton}
+        title="Save professor"
+        onPress={onSave}
+        style={styles.primaryButton}
       />
 
       <BottomNav

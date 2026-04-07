@@ -23,7 +23,6 @@ export const ViewSubject = () => {
 
       <View style={styles.mainCard}>
 
-        {/* SUBJECT CARD */}
         <View style={styles.card}>
           <View style={styles.profileRow}>
             <Image
@@ -35,10 +34,6 @@ export const ViewSubject = () => {
 
             <View style={{ flex: 1 }}>
               <Text style={styles.name}>{subject.name}</Text>
-
-              <Text style={styles.email}>
-                 {subject.description}
-              </Text>
             </View>
           </View>
         </View>
@@ -81,7 +76,12 @@ export const ViewSubject = () => {
             <GradientButton
                 title="Edit subject"
                 icon={editIcon}
-                onPress={() => router.push("/editSubject")}
+                onPress={() =>
+                  router.push({
+                    pathname: "/editSubject",
+                    params: { id: subject.id }
+                  })
+                }
                 style={styles.primaryButton}
             />
         

@@ -7,10 +7,13 @@ import { useEditSubject } from "../hooks/useEditSubject";
 import { styles } from "../styles/editAddStyle";
 
 const EditSubjectScreen = () => {
-  const { subject, setSubject, professors, onSave,} = useEditSubject();
+  const { subject, setSubject, professors, onSave, loading } = useEditSubject();
   const router = useRouter();
-
   const [open, setOpen] = useState(false);
+
+  const selectedTeacher = professors.find(
+    (p) => p.id === String(subject.teacher)
+  );
 
   return (
     <View style={styles.container}>
@@ -20,9 +23,10 @@ const EditSubjectScreen = () => {
         <Text style={styles.label}>Subject name</Text>
         <TextInput
           value={subject.name}
-          onChangeText={(text) => setSubject({ ...subject, name: text })}
+          onChangeText={(text) =>
+            setSubject(prev => ({ ...prev, name: text }))
+          }
           style={styles.input}
-          placeholderTextColor="#aaa"
         />
 
         <Text style={styles.label}>Teacher</Text>
@@ -33,9 +37,8 @@ const EditSubjectScreen = () => {
         >
           <View style={styles.selectRow}>
             <Text style={subject.teacher ? styles.selectText : styles.placeholder}>
-              {subject.teacher || "Select a teacher"}
+              {selectedTeacher?.name || "Select a teacher"}
             </Text>
-
             <Text style={styles.arrow}>{open ? "▲" : "▼"}</Text>
           </View>
         </TouchableOpacity>
@@ -47,11 +50,16 @@ const EditSubjectScreen = () => {
                 key={prof.id}
                 style={styles.dropdownItem}
                 onPress={() => {
-                  setSubject({ ...subject, teacher: prof.name });
+                  setSubject(prev => ({
+                    ...prev,
+                    teacher: prof.id
+                  }));
                   setOpen(false);
                 }}
               >
-                <Text style={styles.dropdownText}>{prof.name}</Text>
+                <Text style={styles.dropdownText}>
+                  {prof.name}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -59,9 +67,9 @@ const EditSubjectScreen = () => {
       </View>
 
       <GradientButton
-          title="Save subject"
-          //onPress={handleLogin}
-          style={styles.primaryButton}
+        title={loading ? "Saving..." : "Save subject"}
+        onPress={onSave}
+        style={styles.primaryButton}
       />
 
       <BottomNav

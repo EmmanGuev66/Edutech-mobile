@@ -11,10 +11,21 @@ import { useViewStudent } from "../hooks/useViewStudent";
 import { styles } from "../styles/viewStyle";
 import { ConfirmDelete } from "./deletePopUp";
 
-export const ViewStudent = () => {
+const ViewStudent = () => {
   const { student, onDelete } = useViewStudent();
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
+
+  if (!student) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.header}>Student's Information</Text>
+        <Text style={{ textAlign: "center", marginTop: 40 }}>
+          Loading...
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -36,24 +47,28 @@ export const ViewStudent = () => {
         <Text style={styles.sectionTitle}>Student information</Text>
 
         <View style={styles.infoBox}>
-            <View style={styles.row}>
-                <Image source={idIcon} style={styles.iconSmall} />
-                <Text style={styles.label}>ID: {student.id}</Text>
-            </View>
+          <View style={styles.row}>
+            <Image source={idIcon} style={styles.iconSmall} />
+            <Text style={styles.label}>ID: {student.id}</Text>
+          </View>
         </View>
 
         <View style={styles.infoBox}>
           <View style={styles.row}>
-             <Image source={subjectIcon} style={styles.iconSmall} />
-             <Text style={styles.label}>Subjects:</Text>
+            <Image source={subjectIcon} style={styles.iconSmall} />
+            <Text style={styles.label}>Subjects:</Text>
           </View>
 
           <View style={styles.subjectContainer}>
-            {student.subjects.map((subj, index) => (
-              <View key={index} style={styles.subjectChipActive}>
-                <Text style={styles.subjectTextActive}>{subj}</Text>
-              </View>
-            ))}
+            {student.subjects?.length > 0 ? (
+              student.subjects.map((subj, index) => (
+                <View key={index} style={styles.subjectChipActive}>
+                  <Text style={styles.subjectTextActive}>{subj}</Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.label}>No subjects</Text>
+            )}
           </View>
         </View>
 
@@ -62,7 +77,12 @@ export const ViewStudent = () => {
           <GradientButton
             title="Edit student"
             icon={editIcon}
-            onPress={() => router.push("/editStudent")}
+            onPress={() =>
+              router.push({
+                pathname: "/editStudent",
+                params: { id: student.id }
+              })
+            }
             style={styles.primaryButton}
           />
 
@@ -71,8 +91,8 @@ export const ViewStudent = () => {
             onPress={() => setShowModal(true)}
           >
             <View style={styles.buttonContent}>
-                <Image source={deleteIcon} style={styles.iconButton} />
-                <Text style={styles.deleteText}>Delete student</Text>
+              <Image source={deleteIcon} style={styles.iconButton} />
+              <Text style={styles.deleteText}>Delete student</Text>
             </View>
           </TouchableOpacity>
 
@@ -90,8 +110,12 @@ export const ViewStudent = () => {
         description={`Are you sure you want to delete ${student.name}?`}
       />
 
-        <BottomNav current="searchStudent" navigateTo={(route) => router.push(route)}/>
-
+      <BottomNav
+        current="searchStudent"
+        navigateTo={(route) => router.push(route)}
+      />
     </View>
   );
 };
+
+export default ViewStudent;

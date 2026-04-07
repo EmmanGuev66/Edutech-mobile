@@ -4,13 +4,12 @@ import BottomNav from "../components/BottomNav";
 import { useSearchStudent } from "../hooks/useSearchStudent";
 import { styles } from "../styles/globalStyle";
 
-const searchStudentScreen = () => {
-  const { students } = useSearchStudent();
+const SearchStudentScreen = () => {
+  const { students, searchStudent } = useSearchStudent();
 
   return (
     <View style={styles.containerList}>
 
-      {/* Title */}
       <Text style={styles.title}>Students</Text>
 
       <View style={[styles.inputContainer, styles.inputNoGlow, { marginBottom: 16 }]}>
@@ -22,12 +21,15 @@ const searchStudentScreen = () => {
           placeholder="Search student"
           placeholderTextColor="#aaa"
           style={styles.inputText}
+          onChangeText={searchStudent}
         />
       </View>
 
       <FlatList
         data={students}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) =>
+          item.id ? item.id.toString() : index.toString()
+        }
         style={{ flex: 1 }}
         contentContainerStyle={{ gap: 12, paddingBottom: 120 }}
         renderItem={({ item }) => (
@@ -39,8 +41,16 @@ const searchStudentScreen = () => {
               <Text style={styles.email}>{item.email}</Text>
             </View>
 
-            <TouchableOpacity style={styles.viewBtn} onPress={() => router.push("/viewStudent")}>
-                <Text style={styles.viewText}>View</Text>
+            <TouchableOpacity
+              style={styles.viewBtn}
+              onPress={() =>
+                router.push({
+                  pathname: "/viewStudent",
+                  params: { id: item.id } // ✅ FIX
+                })
+              }
+            >
+              <Text style={styles.viewText}>View</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -56,7 +66,6 @@ const searchStudentScreen = () => {
         />
       </TouchableOpacity>
 
-      {/*  Navbar */}
       <BottomNav
         current="searchStudent"
         navigateTo={(route) => router.push(route)}
@@ -66,4 +75,4 @@ const searchStudentScreen = () => {
   );
 };
 
-export default searchStudentScreen;
+export default SearchStudentScreen;

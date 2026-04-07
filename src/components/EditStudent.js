@@ -5,20 +5,28 @@ import { useEditStudent } from "../hooks/useEditStudent";
 import { styles } from "../styles/editAddStyle";
 
 const EditStudentScreen = () => {
-  const { student, subjects, selectedSubjects, toggleSubject, navigateTo } = useEditStudent();
+  const { 
+    student, 
+    setStudent,
+    subjects, 
+    selectedSubjects, 
+    toggleSubject, 
+    navigateTo,
+    onSave
+  } = useEditStudent();
 
   return (
     <View style={styles.container}>
 
       <Text style={styles.title}>Edit student</Text>
 
-      {/* Card */}
       <View style={styles.card}>
 
         {/* Photo URL */}
         <Text style={styles.label}>Photo URL</Text>
         <TextInput
           value={student.avatar}
+          onChangeText={(text) => setStudent({ ...student, avatar: text })}
           placeholder="https://..."
           placeholderTextColor="#888"
           style={styles.input}
@@ -26,51 +34,65 @@ const EditStudentScreen = () => {
 
         {/* Name */}
         <Text style={styles.label}>Full name</Text>
-        <TextInput value={student.name} style={styles.input} />
+        <TextInput
+          value={student.name}
+          onChangeText={(text) => setStudent({ ...student, name: text })}
+          style={styles.input}
+        />
 
         {/* Email */}
         <Text style={styles.label}>Email</Text>
-        <TextInput value={student.email} style={styles.input} />
+        <TextInput
+          value={student.email}
+          onChangeText={(text) => setStudent({ ...student, email: text })}
+          style={styles.input}
+        />
 
-        {/* SUBJECT */}
+        {/* Subjects */}
         <Text style={styles.label}>Subjects</Text>
 
         <View style={styles.subjectContainer}>
-          {subjects.map((subj) => {
-            const isSelected = selectedSubjects.includes(subj);
+          {subjects?.length > 0 ? (
+            subjects.map((subj) => {
+              const isSelected = selectedSubjects.includes(subj);
 
-            return (
-              <TouchableOpacity
-                key={subj}
-                style={[
-                  styles.subjectChip,
-                  isSelected && styles.subjectChipActive
-                ]}
-                onPress={() => toggleSubject(subj)}
-              >
-                <Text
+              return (
+                <TouchableOpacity
+                  key={subj}
                   style={[
-                    styles.subjectText,
-                    isSelected && styles.subjectTextActive
+                    styles.subjectChip,
+                    isSelected && styles.subjectChipActive
                   ]}
+                  onPress={() => toggleSubject(subj)}
                 >
-                  {subj}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
+                  <Text
+                    style={[
+                      styles.subjectText,
+                      isSelected && styles.subjectTextActive
+                    ]}
+                  >
+                    {subj}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })
+          ) : (
+            <Text style={styles.label}>No subjects available</Text>
+          )}
         </View>
 
       </View>
 
       <GradientButton
-          title="Save student"
-          //onPress={handleLogin}
-          style={styles.primaryButton}
+        title="Save student"
+        onPress={onSave}
+        style={styles.primaryButton}
       />
 
-      {/* NAVBAR */}
-      <BottomNav current="searchStudent" navigateTo={navigateTo} />
+      <BottomNav 
+        current="searchStudent" 
+        navigateTo={navigateTo} 
+      />
 
     </View>
   );

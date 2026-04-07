@@ -1,9 +1,74 @@
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import StorageService from "../helpers/StorageService";
+import api from "../models/api";
+
 export const useEditProfessor = () => {
+  const { id } = useLocalSearchParams();
+  const router = useRouter();
+
+  const [professor, setProfessor] = useState({
+    name: "",
+    email: "",
+    photo: "",
+  });
+
+  const fetchProfessor = async () => {
+    try {
+      const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
+
+      const res = await api.get(`/getTeacher/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      let data = res.data;
+      if (data.data) data = data.data;
+
+      setProfessor({
+        name: data.Name || "",
+        email: data.Email || "",
+        photo: data.Photo || "",
+      });
+
+    } catch (error) {
+      console.log("Error fetching professor:", error?.response?.data || error);
+    }
+  };
+
+  const onSave = async () => {
+    try {
+      const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
+
+      await api.put(
+        `/updateTeacher/${id}`,
+        {
+          Name: professor.name,
+          Email: professor.email,
+          Photo: professor.photo,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      router.replace("/searchProfessor");
+
+    } catch (error) {
+      console.log("Error updating professor:", error?.response?.data || error);
+    }
+  };
+
+  useEffect(() => {
+    if (id) fetchProfessor();
+  }, [id]);
+
   return {
-    professor: {
-      name: "Lalito123",
-      email: "lalito123@utr.com",
-      password: "12345678",
-    },
+    professor,
+    setProfessor,
+    onSave,
   };
 };

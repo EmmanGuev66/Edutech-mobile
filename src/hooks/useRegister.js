@@ -2,69 +2,80 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
+import api from "../models/api";
 
 export const useRegister = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const router = useRouter();
 
     const handleRegister = async () => {
 
-        // 🔹 Campos vacíos
         if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-            Alert.alert('Error', 'Todos los campos son obligatorios');
+            Alert.alert('Error', 'All fields are required');
             return;
         }
 
-        // 🔹 Validación email (REGEX)
-        if (!StorageService.validate('email', email)) {
-            Alert.alert('Error', 'Email no válido');
-            return;
-        }
-
-        // 🔹 Validación password (REGEX)
-        if (!StorageService.validate('password', password)) {
+        if (!email.startsWith("ad")) {
             Alert.alert(
-                'Error',
-                'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número'
+                'Invalid role',
+                'Only admin accounts are allowed.\n\nUse format:\nad1234@school.com'
             );
             return;
         }
 
-        // 🔹 Confirm password
+        if (!StorageService.validate('email', email)) {
+            Alert.alert(
+                'Invalid email',
+                'You must register as admin using this format:\n\nadID@school.com\n\nExample: ad1234@school.com'
+            );
+            return;
+        }
+
+        if (!StorageService.validate('password', password)) {
+            Alert.alert(
+                'Error',
+                'Password must be at least 8 characters long and include uppercase, lowercase, and a number'
+            );
+            return;
+        }
+
         if (password !== confirmPassword) {
-            Alert.alert('Error', 'Las contraseñas no coinciden');
+            Alert.alert('Error', 'Passwords do not match');
             return;
         }
 
         try {
-            // 🔹 MOCK REGISTER
+            setLoading(true);
 
-            const user = {
-                name,
-                email
-            };
+            await api.post("/auth/signup", {
+                Name: name.trim(),
+                Email: email.trim(),
+                Password: password
+            });
 
-            const fakeToken = "newUserToken123";
-
-            // Guardar usuario (NO sensible)
-            await StorageService.setItem('user', user);
-
-            // Guardar token (SÍ sensible)
-            await StorageService.saveToken('authToken', fakeToken);
-
-            Alert.alert('Éxito', 'Cuenta creada correctamente', [
+            Alert.alert('Success', 'Admin account created successfully', [
                 {
-                    text: 'Ir al Login',
+                    text: 'Go to login',
                     onPress: () => router.replace('/')
                 }
             ]);
 
         } catch (error) {
-            Alert.alert('Error', 'No se pudo registrar');
+
+            const message =
+                error?.response?.data?.message ||
+                error?.response?.data?.error ||
+                'Registration failed';
+
+            Alert.alert('Error', message);
+
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -73,6 +84,7 @@ export const useRegister = () => {
         email, setEmail,
         password, setPassword,
         confirmPassword, setConfirmPassword,
-        handleRegister
+        handleRegister,
+        loading
     };
 };

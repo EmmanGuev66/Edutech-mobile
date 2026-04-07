@@ -6,7 +6,7 @@ import { useAddProfessor } from "../hooks/useAddProfessor";
 import { styles } from "../styles/editAddStyle";
 
 const AddProfessorScreen = () => {
-  const { professor, setProfessor, onSave } = useAddProfessor();
+  const { professor, setProfessor, onSave, navigateTo } = useAddProfessor();
   const router = useRouter();
 
   return (
@@ -26,39 +26,42 @@ const AddProfessorScreen = () => {
 
         <Text style={styles.label}>ID</Text>
         <TextInput
+          placeholder="Enter ID"
+          placeholderTextColor="#aaa"
           value={professor.id}
           onChangeText={(text) => setProfessor({ ...professor, id: text })}
           style={styles.input}
-          placeholderTextColor="#aaa"
         />
 
         <Text style={styles.label}>Full name</Text>
         <TextInput
+          placeholder="Enter name"
+          placeholderTextColor="#aaa"
           value={professor.name}
           onChangeText={(text) => setProfessor({ ...professor, name: text })}
           style={styles.input}
-          placeholderTextColor="#aaa"
         />
 
         <Text style={styles.label}>Email</Text>
         <TextInput
+          placeholder="Enter email"
+          placeholderTextColor="#aaa"
           value={professor.email}
           onChangeText={(text) => setProfessor({ ...professor, email: text })}
           style={styles.input}
-          placeholderTextColor="#aaa"
         />
 
       </View>
 
       <GradientButton
-          title="Save professor"
-          //onPress={handleLogin}
-          style={styles.primaryButton}
+        title="Save professor"
+        onPress={onSave}
+        style={styles.primaryButton}
       />
 
       <BottomNav
         current="searchProfessor"
-        navigateTo={(route) => router.push(route)}
+        navigateTo={navigateTo}
       />
     </View>
   );

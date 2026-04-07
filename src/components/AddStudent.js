@@ -12,6 +12,7 @@ const AddStudentScreen = () => {
     selectedSubjects,
     toggleSubject,
     navigateTo,
+    onSave
   } = useAddStudent();
 
   return (
@@ -59,42 +60,44 @@ const AddStudentScreen = () => {
         <Text style={styles.label}>Subjects</Text>
 
         <View style={styles.subjectContainer}>
-          {subjects?.map((subj) => {
-            const isSelected = selectedSubjects?.includes(subj);
+          {subjects?.length > 0 ? (
+            subjects.map((subj) => {
+              const isSelected = selectedSubjects.includes(subj);
 
-            return (
-              <TouchableOpacity
-                key={subj}
-                style={[
-                  styles.subjectChip,
-                  isSelected && styles.subjectChipActive,
-                ]}
-                onPress={() => toggleSubject(subj)}
-              >
-                <Text
+              return (
+                <TouchableOpacity
+                  key={subj}
                   style={[
-                    styles.subjectText,
-                    isSelected && styles.subjectTextActive,
+                    styles.subjectChip,
+                    isSelected && styles.subjectChipActive,
                   ]}
+                  onPress={() => toggleSubject(subj)}
                 >
-                  {subj}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
+                  <Text
+                    style={[
+                      styles.subjectText,
+                      isSelected && styles.subjectTextActive,
+                    ]}
+                  >
+                    {subj}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })
+          ) : (
+            <Text style={styles.label}>No subjects available</Text>
+          )}
         </View>
 
       </View>
 
       <GradientButton
-          title="Save student"
-          //onPress={handleLogin}
-          style={styles.primaryButton}
-        />
+        title="Save student"
+        onPress={onSave}
+        style={styles.primaryButton}
+      />
 
-      {/* NAVBAR */}
       <BottomNav current="searchStudent" navigateTo={navigateTo} />
-
     </View>
   );
 };

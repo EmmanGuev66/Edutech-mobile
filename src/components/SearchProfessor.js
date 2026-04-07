@@ -4,8 +4,8 @@ import BottomNav from "../components/BottomNav";
 import { useSearchProfessor } from "../hooks/useSearchProfessor";
 import { styles } from "../styles/globalStyle";
 
-const searchProfessorScreen = () => {
-  const { professors } = useSearchProfessor();
+const SearchProfessorScreen = () => {
+  const { professors, searchProfessor } = useSearchProfessor();
 
   return (
     <View style={styles.containerList}>
@@ -21,12 +21,15 @@ const searchProfessorScreen = () => {
           placeholder="Search professor"
           placeholderTextColor="#aaa"
           style={styles.inputText}
+          onChangeText={searchProfessor}
         />
       </View>
 
       <FlatList
         data={professors}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) =>
+          item.id ? item.id.toString() : index.toString()
+        }
         style={{ flex: 1 }}
         contentContainerStyle={{ gap: 12, paddingBottom: 120 }}
         renderItem={({ item }) => (
@@ -40,7 +43,12 @@ const searchProfessorScreen = () => {
 
             <TouchableOpacity
               style={styles.viewBtn}
-              onPress={() => router.push("/viewProfessor")}
+              onPress={() =>
+                router.push({
+                  pathname: "/viewProfessor",
+                  params: { id: item.id }
+                })
+              }
             >
               <Text style={styles.viewText}>View</Text>
             </TouchableOpacity>
@@ -67,4 +75,4 @@ const searchProfessorScreen = () => {
   );
 };
 
-export default searchProfessorScreen;
+export default SearchProfessorScreen;

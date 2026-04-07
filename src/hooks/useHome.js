@@ -1,27 +1,66 @@
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import StorageService from "../helpers/StorageService";
+import api from "../models/api";
 
 export const useHome = () => {
-    const router = useRouter();
+  const router = useRouter();
 
-    // Datos estáticos para el mockup
-    const stats = {
-        students: 120,
-        professors: 35,
-        subjects: 20
-    };
+  const [stats, setStats] = useState({
+    students: 0,
+    professors: 0,
+    subjects: 0
+  });
 
-    const activities = [
-        { id: 1, title: 'New student registered', detail: 'cabreba.dayana@utr.com' },
-        { id: 2, title: 'New subject created', detail: 'Object-Oriented Programming' }
-    ];
+  const navigateTo = (route) => {
+    router.push(route);
+  };
 
-    const navigateTo = (route) => {
-        router.push(route);
-    };
+  const fetchStats = async () => {
+    try {
+      const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
 
-    return {
-        stats,
-        activities,
-        navigateTo
-    };
+      const [studentsRes, teachersRes, subjectsRes] = await Promise.all([
+        api.get("/getAllStudents", {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        api.get("/getAllTeachers", {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        api.get("/getAllSubjects", {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      ]);
+
+      const normalize = (res) => {
+        let data = res.data;
+
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data.data)) return data.data;
+        if (Array.isArray(data.students)) return data.students;
+        if (Array.isArray(data.teachers)) return data.teachers;
+        if (Array.isArray(data.subjects)) return data.subjects;
+
+        return [];
+      };
+
+      setStats({
+        students: normalize(studentsRes).length,
+        professors: normalize(teachersRes).length,
+        subjects: normalize(subjectsRes).length
+      });
+
+    } catch (error) {
+      console.log("Error fetching stats:", error?.response?.data || error);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  return {
+    stats,
+    navigateTo
+  };
 };

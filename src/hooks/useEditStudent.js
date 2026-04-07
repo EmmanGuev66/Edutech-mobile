@@ -1,26 +1,87 @@
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import StorageService from "../helpers/StorageService";
+import api from "../models/api";
 
 export const useEditStudent = () => {
   const router = useRouter();
+  const { id } = useLocalSearchParams();
 
-  // Mock student
   const [student, setStudent] = useState({
-    id: "1",
-    name: "Carlos Ruiz",
-    age: "18",
-    email: "ruiz.carlos@utr.com",
-    avatar: "https://i.pravatar.cc/150?img=3",
+    id: "",
+    name: "",
+    email: "",
+    avatar: "",
   });
 
-  // Options
-  const ages = ["16", "17", "18", "19"];
-  const subjects = ["Math", "Physics", "Programming"];
+  const [subjects, setSubjects] = useState([]);
+  const [selectedSubjects, setSelectedSubjects] = useState([]);
 
-  // ✅ MULTI SELECT STATE
-  const [selectedSubjects, setSelectedSubjects] = useState(["Math"]); // precargado
+  const fetchStudent = async () => {
+    try {
+      const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
 
-  // Toggle subject
+      const response = await api.get(`/getStudent/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      let data = response.data;
+
+      if (data.data) data = data.data;
+
+      const mapped = {
+        id: data.ID || data.id,
+        name: data.Name,
+        email: data.Email,
+        avatar: data.Photo || "",
+      };
+
+      const subs = Array.isArray(data.Subjects)
+        ? data.Subjects
+        : data.Subjects
+        ? [data.Subjects]
+        : [];
+
+      setStudent(mapped);
+      setSelectedSubjects(subs);
+
+    } catch (error) {
+      console.log("Error fetching student:", error);
+    }
+  };
+
+  const fetchSubjects = async () => {
+    try {
+      const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
+
+      const response = await api.get("/getAllSubjects", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      let data = response.data;
+
+      if (Array.isArray(data)) {
+        // ok
+      } else if (Array.isArray(data.subjects)) {
+        data = data.subjects;
+      } else if (Array.isArray(data.data)) {
+        data = data.data;
+      } else {
+        throw new Error("Unexpected response format");
+      }
+
+      const names = data.map((s) => s.Name);
+      setSubjects(names);
+
+    } catch (error) {
+      console.log("Error fetching subjects:", error);
+    }
+  };
+
   const toggleSubject = (subject) => {
     if (selectedSubjects.includes(subject)) {
       setSelectedSubjects(selectedSubjects.filter((s) => s !== subject));
@@ -29,23 +90,50 @@ export const useEditStudent = () => {
     }
   };
 
-  // Navegación (para navbar)
+  const onSave = async () => {
+    try {
+      const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
+
+      await api.put(
+        `/updateStudent/${id}`,
+        {
+          Name: student.name,
+          Email: student.email,
+          Subjects: selectedSubjects,
+          Photo: student.avatar,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      router.replace("/searchStudent");
+
+    } catch (error) {
+      console.log("Error updating student:", error);
+    }
+  };
+
   const navigateTo = (route) => {
     router.push(route);
   };
 
-  const onDelete = () => {
-    console.log("Delete student");
-  };
+  useEffect(() => {
+    if (id) {
+      fetchStudent();
+      fetchSubjects();
+    }
+  }, [id]);
 
   return {
     student,
     setStudent,
-    ages,
     subjects,
     selectedSubjects,
     toggleSubject,
     navigateTo,
-    onDelete,
+    onSave,
   };
 };

@@ -1,16 +1,15 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import BottomNav from "../components/BottomNav";
 import { useHome } from "../hooks/useHome";
 import { styles } from "../styles/globalStyle";
 
 const HomeScreen = () => {
-  const { stats, activities, navigateTo } = useHome();
+  const { stats, navigateTo } = useHome();
 
   return (
     <View style={styles.container}>
 
-      {/* Header */}
       <Image
         source={require("../../assets/images/logo.png")}
         style={styles.logo}
@@ -20,10 +19,8 @@ const HomeScreen = () => {
       <Text style={styles.title}>EduTech Connect</Text>
       <Text style={styles.subtitle}>School Management System</Text>
 
-      {/* Stats */}
       <View style={styles.statsRow}>
 
-        {/* Students */}
         <TouchableOpacity
           onPress={() => navigateTo("/searchStudent")}
           style={{ flex: 1, marginHorizontal: 5 }}
@@ -41,7 +38,6 @@ const HomeScreen = () => {
           </LinearGradient>
         </TouchableOpacity>
 
-        {/* Professors */}
         <TouchableOpacity
           onPress={() => navigateTo("/searchProfessor")}
           style={{ flex: 1, marginHorizontal: 5 }}
@@ -78,22 +74,6 @@ const HomeScreen = () => {
 
       </View>
 
-      {/* Activities */}
-      <Text style={styles.sectionTitle}>Recent Activities</Text>
-
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 100 }} 
-      >
-        {activities.map((act) => (
-          <View key={act.id} style={styles.activityCard}>
-            <Text style={styles.activityTitle}>{act.title}</Text>
-            <Text style={styles.activityDetail}>{act.detail}</Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Navbar */}
       <BottomNav current="home" navigateTo={navigateTo} />
 
     </View>
