@@ -12,7 +12,8 @@ const AddStudentScreen = () => {
     selectedSubjects,
     toggleSubject,
     navigateTo,
-    onSave
+    onSave,
+    errors
   } = useAddStudent();
 
   return (
@@ -35,35 +36,37 @@ const AddStudentScreen = () => {
           placeholder="Enter name"
           placeholderTextColor="#888"
           value={student.name}
-          onChangeText={(text) => {
-            const noNumbers = text.replace(/[0-9]/g, "");
-
-            if (text !== noNumbers) {
-              alert("Name cannot contain numbers");
-            }
-
-            setStudent({ ...student, name: noNumbers });
-          }}
-          style={styles.input}
+          onChangeText={(text) => setStudent({ ...student, name: text })}
+          style={[
+            styles.input,
+            errors.name && { borderColor: "red" }
+          ]}
         />
+
+        {errors.name && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.name}
+          </Text>
+        )}
 
         <Text style={styles.label}>ID</Text>
         <TextInput
           placeholder="Enter ID"
           placeholderTextColor="#888"
           value={student.id}
-          onChangeText={(text) => {
-            const numeric = text.replace(/[^0-9]/g, "");
-
-            if (text !== numeric) {
-              alert("Only numbers allowed");
-            }
-
-            setStudent({ ...student, id: numeric });
-          }}
-          style={styles.input}
+          onChangeText={(text) => setStudent({ ...student, id: text })}
+          style={[
+            styles.input,
+            errors.id && { borderColor: "red" }
+          ]}
           keyboardType="numeric"
         />
+
+        {errors.id && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.id}
+          </Text>
+        )}
 
         <Text style={styles.label}>Subjects</Text>
 

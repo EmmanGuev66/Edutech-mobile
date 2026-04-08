@@ -1,6 +1,5 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
 import api from "../models/api";
 
@@ -15,6 +14,11 @@ export const useAddStudent = () => {
 
   const [subjects, setSubjects] = useState([]);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
+
+  const [errors, setErrors] = useState({
+    id: "",
+    name: ""
+  });
 
   const fetchSubjects = async () => {
     try {
@@ -34,7 +38,7 @@ export const useAddStudent = () => {
       } else if (Array.isArray(data.data)) {
         data = data.data;
       } else {
-        throw new Error("Unexpected response format");
+        data = [];
       }
 
       const names = data.map((s) => s.Name);
@@ -54,23 +58,25 @@ export const useAddStudent = () => {
   };
 
   const onSave = async () => {
-    if (!student.id) {
-      Alert.alert("Error", "ID is required");
+    setErrors({ id: "", name: "" });
+
+    if (!student.id.trim()) {
+      setErrors({ id: "ID is required", name: "" });
       return;
     }
 
     if (!/^[0-9]+$/.test(student.id)) {
-      Alert.alert("Error", "ID must contain only numbers");
+      setErrors({ id: "Only numbers allowed", name: "" });
       return;
     }
 
-    if (!student.name) {
-      Alert.alert("Error", "Name is required");
+    if (!student.name.trim()) {
+      setErrors({ id: "", name: "Name is required" });
       return;
     }
 
     if (/[0-9]/.test(student.name)) {
-      Alert.alert("Error", "Name cannot contain numbers");
+      setErrors({ id: "", name: "Name cannot contain numbers" });
       return;
     }
 
@@ -99,7 +105,7 @@ export const useAddStudent = () => {
       );
 
       if (exists) {
-        Alert.alert("Duplicate ID", "This student ID already exists");
+        setErrors({ id: "This ID already exists", name: "" });
         return;
       }
 
@@ -130,7 +136,7 @@ export const useAddStudent = () => {
 
     } catch (error) {
       console.log("Error creating student:", error?.response?.data || error);
-      Alert.alert("Error", "Could not create student");
+      setErrors({ id: "Could not create student", name: "" });
     }
   };
 
@@ -150,5 +156,6 @@ export const useAddStudent = () => {
     toggleSubject,
     navigateTo,
     onSave,
+    errors
   };
 };

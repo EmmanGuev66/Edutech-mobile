@@ -1,6 +1,5 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
 import api from "../models/api";
 
@@ -18,6 +17,12 @@ export const useAddSubject = () => {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const [errors, setErrors] = useState({
+    id: "",
+    name: "",
+    teacher: ""
+  });
+
   const fetchProfessors = async () => {
     try {
       const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
@@ -31,10 +36,10 @@ export const useAddSubject = () => {
       if (Array.isArray(data)) {}
       else if (Array.isArray(data.teachers)) data = data.teachers;
       else if (Array.isArray(data.data)) data = data.data;
-      else throw new Error("Unexpected response");
+      else data = [];
 
       const mapped = data.map((item) => ({
-        id: item.ID || item.id,
+        id: String(item.ID || item.id),
         name: item.Name || item.name
       }));
 
@@ -58,7 +63,7 @@ export const useAddSubject = () => {
       if (Array.isArray(data)) {}
       else if (Array.isArray(data.subjects)) data = data.subjects;
       else if (Array.isArray(data.data)) data = data.data;
-      else throw new Error("Unexpected response");
+      else data = [];
 
       setSubjects(data);
 
@@ -68,29 +73,36 @@ export const useAddSubject = () => {
   };
 
   const onSave = async () => {
-    if (!subject.id) {
-      Alert.alert("Error", "ID is required");
+    setErrors({ id: "", name: "", teacher: "" });
+
+    if (!subject.id.trim()) {
+      setErrors({ id: "ID is required", name: "", teacher: "" });
       return;
     }
 
-    if (!subject.name) {
-      Alert.alert("Error", "Subject name is required");
+    if (!/^[0-9]+$/.test(subject.id)) {
+      setErrors({ id: "Only numbers allowed", name: "", teacher: "" });
+      return;
+    }
+
+    if (!subject.name.trim()) {
+      setErrors({ id: "", name: "Subject name is required", teacher: "" });
       return;
     }
 
     if (!subject.teacher) {
-      Alert.alert("Error", "Teacher is required");
+      setErrors({ id: "", name: "", teacher: "Select a teacher" });
       return;
     }
 
     const formattedId = `MAT${subject.id}`;
 
     const idExists = subjects.some(
-      (s) => (s.ID || s.id) === formattedId
+      (s) => String(s.ID || s.id) === formattedId
     );
 
     if (idExists) {
-      Alert.alert("Error", "Subject ID already exists");
+      setErrors({ id: "ID already exists", name: "", teacher: "" });
       return;
     }
 
@@ -100,7 +112,7 @@ export const useAddSubject = () => {
     );
 
     if (nameExists) {
-      Alert.alert("Error", "Subject name already exists");
+      setErrors({ id: "", name: "Subject already exists", teacher: "" });
       return;
     }
 
@@ -127,11 +139,8 @@ export const useAddSubject = () => {
       router.replace("/searchSubject");
 
     } catch (error) {
-      const message =
-        error?.response?.data?.message ||
-        "Error creating subject";
-
-      Alert.alert("Error", message);
+      console.log("Error creating subject:", error?.response?.data || error);
+      setErrors({ id: "", name: "Could not create subject", teacher: "" });
     } finally {
       setLoading(false);
     }
@@ -147,6 +156,7 @@ export const useAddSubject = () => {
     setSubject,
     professors,
     onSave,
-    loading
+    loading,
+    errors
   };
 };

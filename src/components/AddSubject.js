@@ -12,7 +12,7 @@ import { useAddSubject } from "../hooks/useAddSubject";
 import { styles } from "../styles/editAddStyle";
 
 const AddSubjectScreen = () => {
-  const { subject, setSubject, professors, onSave, loading } = useAddSubject();
+  const { subject, setSubject, professors, onSave, loading, errors } = useAddSubject();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -28,18 +28,22 @@ const AddSubjectScreen = () => {
           value={subject.id ? `MAT${subject.id}` : ""}
           onChangeText={(text) => {
             const numeric = text.replace(/[^0-9]/g, "");
-
-            if (text !== numeric && text !== `MAT${numeric}`) {
-              alert("Only numbers allowed");
-            }
-
             setSubject({ ...subject, id: numeric });
           }}
-          style={styles.input}
+          style={[
+            styles.input,
+            errors.id && { borderColor: "red" }
+          ]}
           placeholder="101"
           placeholderTextColor="#aaa"
           keyboardType="numeric"
         />
+
+        {errors.id && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.id}
+          </Text>
+        )}
 
         <Text style={styles.label}>Subject name</Text>
         <TextInput
@@ -47,10 +51,19 @@ const AddSubjectScreen = () => {
           onChangeText={(text) =>
             setSubject({ ...subject, name: text })
           }
-          style={styles.input}
+          style={[
+            styles.input,
+            errors.name && { borderColor: "red" }
+          ]}
           placeholder="Math"
           placeholderTextColor="#aaa"
         />
+
+        {errors.name && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.name}
+          </Text>
+        )}
 
         <Text style={styles.label}>Photo URL</Text>
         <TextInput
@@ -66,7 +79,10 @@ const AddSubjectScreen = () => {
         <Text style={styles.label}>Teacher</Text>
 
         <TouchableOpacity
-          style={styles.select}
+          style={[
+            styles.select,
+            errors.teacher && { borderColor: "red" }
+          ]}
           onPress={() => setOpen(!open)}
         >
           <View style={styles.selectRow}>
@@ -80,6 +96,12 @@ const AddSubjectScreen = () => {
             <Text style={styles.arrow}>{open ? "▲" : "▼"}</Text>
           </View>
         </TouchableOpacity>
+
+        {errors.teacher && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.teacher}
+          </Text>
+        )}
 
         {open && (
           <View style={styles.dropdown}>
@@ -103,7 +125,6 @@ const AddSubjectScreen = () => {
         title={loading ? "Saving..." : "Save subject"}
         onPress={onSave}
         style={styles.primaryButton}
-        disabled={!subject.teacher}
       />
 
       <BottomNav

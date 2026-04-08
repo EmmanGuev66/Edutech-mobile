@@ -6,7 +6,7 @@ import { useEditProfessor } from "../hooks/useEditProfessor";
 import { styles } from "../styles/editAddStyle";
 
 const EditProfessorScreen = () => {
-  const { professor, setProfessor, onSave } = useEditProfessor();
+  const { professor, setProfessor, onSave, errors } = useEditProfessor();
   const router = useRouter();
 
   return (
@@ -18,10 +18,19 @@ const EditProfessorScreen = () => {
         <TextInput
           value={professor.name}
           onChangeText={(text) => setProfessor({ ...professor, name: text })}
-          style={styles.input}
+          style={[
+            styles.input,
+            errors.name && { borderColor: "red" }
+          ]}
           placeholder="Enter name"
           placeholderTextColor="#aaa"
         />
+
+        {errors.name && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.name}
+          </Text>
+        )}
 
         <Text style={styles.label}>Photo URL</Text>
         <TextInput

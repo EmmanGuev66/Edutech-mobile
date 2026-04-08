@@ -1,6 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
 import api from "../models/api";
 
@@ -17,6 +16,10 @@ export const useEditStudent = () => {
   const [subjects, setSubjects] = useState([]);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [studentSubjects, setStudentSubjects] = useState([]);
+
+  const [errors, setErrors] = useState({
+    name: ""
+  });
 
   const normalize = (text) => String(text).trim().toLowerCase();
 
@@ -71,7 +74,7 @@ export const useEditStudent = () => {
       } else if (Array.isArray(data.data)) {
         data = data.data;
       } else {
-        throw new Error("Unexpected response format");
+        data = [];
       }
 
       const names = data.map((s) => s.Name);
@@ -109,8 +112,15 @@ export const useEditStudent = () => {
   };
 
   const onSave = async () => {
+    setErrors({ name: "" });
+
     if (!student.name?.trim()) {
-      Alert.alert("Error", "Student name is required");
+      setErrors({ name: "Student name is required" });
+      return;
+    }
+
+    if (/[0-9]/.test(student.name)) {
+      setErrors({ name: "Name cannot contain numbers" });
       return;
     }
 
@@ -137,6 +147,7 @@ export const useEditStudent = () => {
       });
     } catch (error) {
       console.log("Error updating student:", error);
+      setErrors({ name: "Could not update student" });
     }
   };
 
@@ -159,5 +170,6 @@ export const useEditStudent = () => {
     toggleSubject,
     navigateTo,
     onSave,
+    errors
   };
 };

@@ -1,6 +1,5 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
 import api from "../models/api";
 
@@ -13,18 +12,35 @@ export const useAddProfessor = () => {
     avatar: "",
   });
 
+  const [errors, setErrors] = useState({
+    id: "",
+    name: ""
+  });
+
   const onSave = async () => {
+    setErrors({ id: "", name: "" });
+
+    if (!professor.id.trim()) {
+      setErrors({ id: "ID is required", name: "" });
+      return;
+    }
+
+    if (!/^[0-9]+$/.test(professor.id)) {
+      setErrors({ id: "Only numbers allowed", name: "" });
+      return;
+    }
+
+    if (!professor.name.trim()) {
+      setErrors({ id: "", name: "Name is required" });
+      return;
+    }
+
+    if (/[0-9]/.test(professor.name)) {
+      setErrors({ id: "", name: "Name cannot contain numbers" });
+      return;
+    }
+
     try {
-      if (!professor.id) {
-        Alert.alert("Error", "ID is required");
-        return;
-      }
-
-      if (!professor.name?.trim()) {
-        Alert.alert("Error", "Name is required");
-        return;
-      }
-
       const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
 
       const response = await api.get("/getAllTeachers", {
@@ -49,7 +65,7 @@ export const useAddProfessor = () => {
       );
 
       if (exists) {
-        Alert.alert("Duplicate ID", "This professor ID already exists");
+        setErrors({ id: "This ID already exists", name: "" });
         return;
       }
 
@@ -78,7 +94,7 @@ export const useAddProfessor = () => {
 
     } catch (error) {
       console.log("Error creating professor:", error?.response?.data || error);
-      Alert.alert("Error", "Could not create professor");
+      setErrors({ id: "Could not create professor", name: "" });
     }
   };
 
@@ -90,6 +106,7 @@ export const useAddProfessor = () => {
     professor,
     setProfessor,
     onSave,
-    navigateTo
+    navigateTo,
+    errors
   };
 };

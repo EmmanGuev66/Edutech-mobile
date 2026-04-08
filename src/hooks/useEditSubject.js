@@ -1,6 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
 import api from "../models/api";
 
@@ -17,8 +16,13 @@ export const useEditSubject = () => {
   });
 
   const [professors, setProfessors] = useState([]);
-  const [subjects, setSubjects] = useState([]); 
+  const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [errors, setErrors] = useState({
+    name: "",
+    teacher: ""
+  });
 
   const fetchSubject = async () => {
     try {
@@ -59,7 +63,7 @@ export const useEditSubject = () => {
       if (Array.isArray(data)) {}
       else if (Array.isArray(data.teachers)) data = data.teachers;
       else if (Array.isArray(data.data)) data = data.data;
-      else throw new Error("Formato inesperado");
+      else data = [];
 
       const mapped = data.map((item) => ({
         id: String(item.ID || item.id),
@@ -86,7 +90,7 @@ export const useEditSubject = () => {
       if (Array.isArray(data)) {}
       else if (Array.isArray(data.subjects)) data = data.subjects;
       else if (Array.isArray(data.data)) data = data.data;
-      else throw new Error("Unexpected response");
+      else data = [];
 
       setSubjects(data);
 
@@ -96,28 +100,30 @@ export const useEditSubject = () => {
   };
 
   const onSave = async () => {
+    setErrors({ name: "", teacher: "" });
+
+    if (!subject.name?.trim()) {
+      setErrors({ name: "Subject name is required", teacher: "" });
+      return;
+    }
+
+    if (!subject.teacher) {
+      setErrors({ name: "", teacher: "Select a teacher" });
+      return;
+    }
+
+    const nameExists = subjects.some(
+      (s) =>
+        (s.Name || s.name)?.toLowerCase() === subject.name.toLowerCase() &&
+        String(s.ID || s.id) !== String(subject.id)
+    );
+
+    if (nameExists) {
+      setErrors({ name: "Subject already exists", teacher: "" });
+      return;
+    }
+
     try {
-      if (!subject.name?.trim()) {
-        Alert.alert("Error", "Subject name is required");
-        return;
-      }
-
-      if (!subject.teacher) {
-        Alert.alert("Error", "Select a teacher");
-        return;
-      }
-
-      const nameExists = subjects.some(
-        (s) =>
-          (s.Name || s.name)?.toLowerCase() === subject.name.toLowerCase() &&
-          String(s.ID || s.id) !== String(subject.id)
-      );
-
-      if (nameExists) {
-        Alert.alert("Error", "Subject name already exists");
-        return;
-      }
-
       setLoading(true);
 
       const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
@@ -137,6 +143,7 @@ export const useEditSubject = () => {
 
     } catch (error) {
       console.log("Error updating subject:", error?.response?.data || error);
+      setErrors({ name: "Could not update subject", teacher: "" });
     } finally {
       setLoading(false);
     }
@@ -155,6 +162,7 @@ export const useEditSubject = () => {
     setSubject,
     professors,
     onSave,
-    loading
+    loading,
+    errors
   };
 };

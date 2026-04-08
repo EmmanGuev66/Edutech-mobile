@@ -7,7 +7,7 @@ import { useEditSubject } from "../hooks/useEditSubject";
 import { styles } from "../styles/editAddStyle";
 
 const EditSubjectScreen = () => {
-  const { subject, setSubject, professors, onSave, loading } = useEditSubject();
+  const { subject, setSubject, professors, onSave, loading, errors } = useEditSubject();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -26,13 +26,25 @@ const EditSubjectScreen = () => {
           onChangeText={(text) =>
             setSubject(prev => ({ ...prev, name: text }))
           }
-          style={styles.input}
+          style={[
+            styles.input,
+            errors.name && { borderColor: "red" }
+          ]}
         />
+
+        {errors.name && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.name}
+          </Text>
+        )}
 
         <Text style={styles.label}>Teacher</Text>
 
         <TouchableOpacity
-          style={styles.select}
+          style={[
+            styles.select,
+            errors.teacher && { borderColor: "red" }
+          ]}
           onPress={() => setOpen(!open)}
         >
           <View style={styles.selectRow}>
@@ -42,6 +54,12 @@ const EditSubjectScreen = () => {
             <Text style={styles.arrow}>{open ? "▲" : "▼"}</Text>
           </View>
         </TouchableOpacity>
+
+        {errors.teacher && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.teacher}
+          </Text>
+        )}
 
         {open && (
           <View style={styles.dropdown}>

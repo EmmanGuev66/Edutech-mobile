@@ -12,7 +12,8 @@ const EditStudentScreen = () => {
     selectedSubjects, 
     toggleSubject, 
     navigateTo,
-    onSave
+    onSave,
+    errors
   } = useEditStudent();
 
   const normalize = (text) => String(text).trim().toLowerCase();
@@ -37,8 +38,17 @@ const EditStudentScreen = () => {
         <TextInput
           value={student.name}
           onChangeText={(text) => setStudent({ ...student, name: text })}
-          style={styles.input}
+          style={[
+            styles.input,
+            errors.name && { borderColor: "red" }
+          ]}
         />
+
+        {errors.name && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.name}
+          </Text>
+        )}
 
         <Text style={styles.label}>Subjects</Text>
 

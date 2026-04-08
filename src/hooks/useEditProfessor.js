@@ -1,6 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
 import api from "../models/api";
 
@@ -11,6 +10,10 @@ export const useEditProfessor = () => {
   const [professor, setProfessor] = useState({
     name: "",
     photo: "",
+  });
+
+  const [errors, setErrors] = useState({
+    name: ""
   });
 
   const fetchProfessor = async () => {
@@ -37,8 +40,15 @@ export const useEditProfessor = () => {
   };
 
   const onSave = async () => {
+    setErrors({ name: "" });
+
     if (!professor.name?.trim()) {
-      Alert.alert("Error", "Name is required");
+      setErrors({ name: "Name is required" });
+      return;
+    }
+
+    if (/[0-9]/.test(professor.name)) {
+      setErrors({ name: "Name cannot contain numbers" });
       return;
     }
 
@@ -65,6 +75,7 @@ export const useEditProfessor = () => {
 
     } catch (error) {
       console.log("Error updating professor:", error?.response?.data || error);
+      setErrors({ name: "Could not update professor" });
     }
   };
 
@@ -76,5 +87,6 @@ export const useEditProfessor = () => {
     professor,
     setProfessor,
     onSave,
+    errors
   };
 };

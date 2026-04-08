@@ -5,7 +5,7 @@ import { useAddProfessor } from "../hooks/useAddProfessor";
 import { styles } from "../styles/editAddStyle";
 
 const AddProfessorScreen = () => {
-  const { professor, setProfessor, onSave, navigateTo } = useAddProfessor();
+  const { professor, setProfessor, onSave, navigateTo, errors } = useAddProfessor();
 
   return (
     <View style={styles.container}>
@@ -29,8 +29,17 @@ const AddProfessorScreen = () => {
           value={professor.id}
           onChangeText={(text) => setProfessor({ ...professor, id: text })}
           keyboardType="numeric"
-          style={styles.input}
+          style={[
+            styles.input,
+            errors.id && { borderColor: "red" }
+          ]}
         />
+
+        {errors.id && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.id}
+          </Text>
+        )}
 
         <Text style={styles.label}>Full name</Text>
         <TextInput
@@ -38,8 +47,17 @@ const AddProfessorScreen = () => {
           placeholderTextColor="#aaa"
           value={professor.name}
           onChangeText={(text) => setProfessor({ ...professor, name: text })}
-          style={styles.input}
+          style={[
+            styles.input,
+            errors.name && { borderColor: "red" }
+          ]}
         />
+
+        {errors.name && (
+          <Text style={{ color: "red", marginBottom: 10 }}>
+            {errors.name}
+          </Text>
+        )}
 
       </View>
 
