@@ -29,7 +29,7 @@ export const useSearchStudent = () => {
       }
 
       const mapped = data
-        .filter(item => item.ID || item.id) // evita registros sin ID (causa del 404)
+        .filter(item => item.ID || item.id) 
         .map((item) => ({
           id: item.ID || item.id,
           name: item.Name || item.name || "No name",

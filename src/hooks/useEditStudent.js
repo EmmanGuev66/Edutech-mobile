@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
 import api from "../models/api";
 
@@ -15,6 +16,9 @@ export const useEditStudent = () => {
 
   const [subjects, setSubjects] = useState([]);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const [studentSubjects, setStudentSubjects] = useState([]);
+
+  const normalize = (text) => String(text).trim().toLowerCase();
 
   const fetchStudent = async () => {
     try {
@@ -27,14 +31,7 @@ export const useEditStudent = () => {
       });
 
       let data = response.data;
-
       if (data.data) data = data.data;
-
-      const mapped = {
-        id: data.ID || data.id,
-        name: data.Name,
-        avatar: data.Photo || "",
-      };
 
       const subs = Array.isArray(data.Subjects)
         ? data.Subjects
@@ -42,9 +39,15 @@ export const useEditStudent = () => {
         ? [data.Subjects]
         : [];
 
-      setStudent(mapped);
-      setSelectedSubjects(subs);
+      const names = subs.map((s) => s.Name || s);
 
+      setStudent({
+        id: data.ID || data.id,
+        name: data.Name || "",
+        avatar: data.Photo || "",
+      });
+
+      setStudentSubjects(names);
     } catch (error) {
       console.log("Error fetching student:", error);
     }
@@ -73,21 +76,44 @@ export const useEditStudent = () => {
 
       const names = data.map((s) => s.Name);
       setSubjects(names);
-
     } catch (error) {
       console.log("Error fetching subjects:", error);
     }
   };
 
+  useEffect(() => {
+    if (subjects.length && studentSubjects.length) {
+      const selected = subjects.filter((subj) =>
+        studentSubjects.some(
+          (s) => normalize(s) === normalize(subj)
+        )
+      );
+      setSelectedSubjects(selected);
+    }
+  }, [subjects, studentSubjects]);
+
   const toggleSubject = (subject) => {
-    if (selectedSubjects.includes(subject)) {
-      setSelectedSubjects(selectedSubjects.filter((s) => s !== subject));
+    const exists = selectedSubjects.some(
+      (s) => normalize(s) === normalize(subject)
+    );
+
+    if (exists) {
+      setSelectedSubjects(
+        selectedSubjects.filter(
+          (s) => normalize(s) !== normalize(subject)
+        )
+      );
     } else {
       setSelectedSubjects([...selectedSubjects, subject]);
     }
   };
 
   const onSave = async () => {
+    if (!student.name?.trim()) {
+      Alert.alert("Error", "Student name is required");
+      return;
+    }
+
     try {
       const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
 
@@ -105,8 +131,10 @@ export const useEditStudent = () => {
         }
       );
 
-      router.replace("/searchStudent");
-
+      router.replace({
+        pathname: "/viewStudent",
+        params: { id }
+      });
     } catch (error) {
       console.log("Error updating student:", error);
     }

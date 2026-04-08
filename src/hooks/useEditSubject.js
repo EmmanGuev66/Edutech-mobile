@@ -17,6 +17,7 @@ export const useEditSubject = () => {
   });
 
   const [professors, setProfessors] = useState([]);
+  const [subjects, setSubjects] = useState([]); 
   const [loading, setLoading] = useState(false);
 
   const fetchSubject = async () => {
@@ -55,14 +56,10 @@ export const useEditSubject = () => {
 
       let data = response.data;
 
-      if (Array.isArray(data)) {
-      } else if (Array.isArray(data.teachers)) {
-        data = data.teachers;
-      } else if (Array.isArray(data.data)) {
-        data = data.data;
-      } else {
-        throw new Error("Formato inesperado");
-      }
+      if (Array.isArray(data)) {}
+      else if (Array.isArray(data.teachers)) data = data.teachers;
+      else if (Array.isArray(data.data)) data = data.data;
+      else throw new Error("Formato inesperado");
 
       const mapped = data.map((item) => ({
         id: String(item.ID || item.id),
@@ -76,10 +73,32 @@ export const useEditSubject = () => {
     }
   };
 
+  const fetchSubjects = async () => {
+    try {
+      const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
+
+      const res = await api.get("/getAllSubjects", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      let data = res.data;
+
+      if (Array.isArray(data)) {}
+      else if (Array.isArray(data.subjects)) data = data.subjects;
+      else if (Array.isArray(data.data)) data = data.data;
+      else throw new Error("Unexpected response");
+
+      setSubjects(data);
+
+    } catch (error) {
+      console.log("Error fetching subjects:", error?.response?.data || error);
+    }
+  };
+
   const onSave = async () => {
     try {
-      if (!subject.id) {
-        Alert.alert("Error", "Subject ID missing");
+      if (!subject.name?.trim()) {
+        Alert.alert("Error", "Subject name is required");
         return;
       }
 
@@ -88,16 +107,31 @@ export const useEditSubject = () => {
         return;
       }
 
+      const nameExists = subjects.some(
+        (s) =>
+          (s.Name || s.name)?.toLowerCase() === subject.name.toLowerCase() &&
+          String(s.ID || s.id) !== String(subject.id)
+      );
+
+      if (nameExists) {
+        Alert.alert("Error", "Subject name already exists");
+        return;
+      }
+
       setLoading(true);
 
       const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
 
-      await api.put(`/updateSubject/${subject.id}`, {
-        Name: subject.name,
-        Teacher: subject.teacher
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.put(
+        `/updateSubject/${subject.id}`,
+        {
+          Name: subject.name,
+          Teacher: subject.teacher
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
 
       router.replace("/searchSubject");
 
@@ -113,6 +147,7 @@ export const useEditSubject = () => {
 
     fetchSubject();
     fetchProfessors();
+    fetchSubjects();
   }, [id]);
 
   return {

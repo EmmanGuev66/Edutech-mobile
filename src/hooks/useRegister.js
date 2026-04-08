@@ -21,7 +21,6 @@ export const useRegister = () => {
 
     const handleRegister = async () => {
 
-        // reset errors
         setErrors({
             name: "",
             email: "",
@@ -29,7 +28,6 @@ export const useRegister = () => {
             confirmPassword: ""
         });
 
-        // required
         if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
             setErrors({
                 name: !name ? "Name is required" : "",
@@ -40,7 +38,6 @@ export const useRegister = () => {
             return;
         }
 
-        // name validation
         if (/\d/.test(name)) {
             setErrors(prev => ({
                 ...prev,
@@ -49,7 +46,6 @@ export const useRegister = () => {
             return;
         }
 
-        // email role
         if (!email.startsWith("ad")) {
             setErrors(prev => ({
                 ...prev,
@@ -58,7 +54,6 @@ export const useRegister = () => {
             return;
         }
 
-        // email format
         if (!StorageService.validate('email', email)) {
             setErrors(prev => ({
                 ...prev,
@@ -67,7 +62,6 @@ export const useRegister = () => {
             return;
         }
 
-        // password validation
         if (!StorageService.validate('password', password)) {
             setErrors(prev => ({
                 ...prev,
@@ -76,7 +70,6 @@ export const useRegister = () => {
             return;
         }
 
-        // match passwords
         if (password !== confirmPassword) {
             setErrors(prev => ({
                 ...prev,

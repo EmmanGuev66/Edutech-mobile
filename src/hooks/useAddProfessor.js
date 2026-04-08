@@ -20,6 +20,11 @@ export const useAddProfessor = () => {
         return;
       }
 
+      if (!professor.name?.trim()) {
+        Alert.alert("Error", "Name is required");
+        return;
+      }
+
       const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
 
       const response = await api.get("/getAllTeachers", {
@@ -50,13 +55,17 @@ export const useAddProfessor = () => {
 
       const generatedEmail = `th${professor.id}@school.com`;
 
+      const photo = professor.avatar?.trim()
+        ? professor.avatar
+        : "https://i.imgur.com/kzfWiow.png";
+
       await api.post(
         "/createTeacher",
         {
           ID: professor.id,
           Name: professor.name,
           Email: generatedEmail,
-          Photo: professor.avatar,
+          Photo: photo,
         },
         {
           headers: {
@@ -64,8 +73,6 @@ export const useAddProfessor = () => {
           }
         }
       );
-
-      Alert.alert("Success", "Professor created");
 
       router.replace("/searchProfessor");
 

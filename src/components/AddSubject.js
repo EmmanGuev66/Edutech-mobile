@@ -1,6 +1,11 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from "react-native";
 import BottomNav from "../components/BottomNav";
 import { GradientButton } from "../components/GradientButton";
 import { useAddSubject } from "../hooks/useAddSubject";
@@ -17,19 +22,31 @@ const AddSubjectScreen = () => {
       <Text style={styles.title}>Add subject</Text>
 
       <View style={styles.card}>
+
         <Text style={styles.label}>ID</Text>
         <TextInput
-          value={subject.id}
-          onChangeText={(text) => setSubject({ ...subject, id: text })}
+          value={subject.id ? `MAT${subject.id}` : ""}
+          onChangeText={(text) => {
+            const numeric = text.replace(/[^0-9]/g, "");
+
+            if (text !== numeric && text !== `MAT${numeric}`) {
+              alert("Only numbers allowed");
+            }
+
+            setSubject({ ...subject, id: numeric });
+          }}
           style={styles.input}
-          placeholder="MAT101"
+          placeholder="101"
           placeholderTextColor="#aaa"
+          keyboardType="numeric"
         />
 
         <Text style={styles.label}>Subject name</Text>
         <TextInput
           value={subject.name}
-          onChangeText={(text) => setSubject({ ...subject, name: text })}
+          onChangeText={(text) =>
+            setSubject({ ...subject, name: text })
+          }
           style={styles.input}
           placeholder="Math"
           placeholderTextColor="#aaa"
@@ -38,9 +55,11 @@ const AddSubjectScreen = () => {
         <Text style={styles.label}>Photo URL</Text>
         <TextInput
           value={subject.photo}
-          onChangeText={(text) => setSubject({ ...subject, photo: text })}
+          onChangeText={(text) =>
+            setSubject({ ...subject, photo: text })
+          }
           style={styles.input}
-          placeholder="https://example.com/image.jpg"
+          placeholder="https://i.imgur.com/6ZuE4oQ.png"
           placeholderTextColor="#aaa"
         />
 

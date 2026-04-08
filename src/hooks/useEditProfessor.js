@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
 import api from "../models/api";
 
@@ -36,6 +37,11 @@ export const useEditProfessor = () => {
   };
 
   const onSave = async () => {
+    if (!professor.name?.trim()) {
+      Alert.alert("Error", "Name is required");
+      return;
+    }
+
     try {
       const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
 
@@ -52,7 +58,10 @@ export const useEditProfessor = () => {
         }
       );
 
-      router.replace("/searchProfessor");
+      router.replace({
+        pathname: "/viewProfessor",
+        params: { id }
+      });
 
     } catch (error) {
       console.log("Error updating professor:", error?.response?.data || error);

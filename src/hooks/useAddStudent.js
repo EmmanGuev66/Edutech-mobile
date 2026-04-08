@@ -54,12 +54,27 @@ export const useAddStudent = () => {
   };
 
   const onSave = async () => {
-    try {
-      if (!student.id) {
-        Alert.alert("Error", "ID is required");
-        return;
-      }
+    if (!student.id) {
+      Alert.alert("Error", "ID is required");
+      return;
+    }
 
+    if (!/^[0-9]+$/.test(student.id)) {
+      Alert.alert("Error", "ID must contain only numbers");
+      return;
+    }
+
+    if (!student.name) {
+      Alert.alert("Error", "Name is required");
+      return;
+    }
+
+    if (/[0-9]/.test(student.name)) {
+      Alert.alert("Error", "Name cannot contain numbers");
+      return;
+    }
+
+    try {
       const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
 
       const checkRes = await api.get("/getAllStudents", {
@@ -96,7 +111,9 @@ export const useAddStudent = () => {
           ID: student.id,
           Name: student.name,
           Email: generatedEmail,
-          Photo: student.avatar,
+          Photo: student.avatar?.trim()
+            ? student.avatar
+            : "https://i.imgur.com/kzfWiow.png",
           Subjects:
             selectedSubjects.length === 1
               ? selectedSubjects[0]

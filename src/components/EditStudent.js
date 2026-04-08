@@ -15,6 +15,8 @@ const EditStudentScreen = () => {
     onSave
   } = useEditStudent();
 
+  const normalize = (text) => String(text).trim().toLowerCase();
+
   return (
     <View style={styles.container}>
 
@@ -43,7 +45,9 @@ const EditStudentScreen = () => {
         <View style={styles.subjectContainer}>
           {subjects?.length > 0 ? (
             subjects.map((subj) => {
-              const isSelected = selectedSubjects.includes(subj);
+              const isSelected = selectedSubjects.find(
+                (s) => normalize(s) === normalize(subj)
+              );
 
               return (
                 <TouchableOpacity

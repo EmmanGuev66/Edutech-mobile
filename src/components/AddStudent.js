@@ -23,7 +23,7 @@ const AddStudentScreen = () => {
 
         <Text style={styles.label}>Photo URL</Text>
         <TextInput
-          placeholder="https://..."
+          placeholder="https://i.imgur.com/kzfWiow.png"
           placeholderTextColor="#888"
           value={student.avatar}
           onChangeText={(text) => setStudent({ ...student, avatar: text })}
@@ -35,7 +35,15 @@ const AddStudentScreen = () => {
           placeholder="Enter name"
           placeholderTextColor="#888"
           value={student.name}
-          onChangeText={(text) => setStudent({ ...student, name: text })}
+          onChangeText={(text) => {
+            const noNumbers = text.replace(/[0-9]/g, "");
+
+            if (text !== noNumbers) {
+              alert("Name cannot contain numbers");
+            }
+
+            setStudent({ ...student, name: noNumbers });
+          }}
           style={styles.input}
         />
 
@@ -44,8 +52,17 @@ const AddStudentScreen = () => {
           placeholder="Enter ID"
           placeholderTextColor="#888"
           value={student.id}
-          onChangeText={(text) => setStudent({ ...student, id: text })}
+          onChangeText={(text) => {
+            const numeric = text.replace(/[^0-9]/g, "");
+
+            if (text !== numeric) {
+              alert("Only numbers allowed");
+            }
+
+            setStudent({ ...student, id: numeric });
+          }}
           style={styles.input}
+          keyboardType="numeric"
         />
 
         <Text style={styles.label}>Subjects</Text>

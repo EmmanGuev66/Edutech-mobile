@@ -94,7 +94,6 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  /* GRADIENT BUTTON (igual que login) */
   primaryButton: {
     borderRadius: 12,
     overflow: "hidden",

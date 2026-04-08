@@ -33,14 +33,12 @@ export const useViewProfessor = () => {
       else if (Array.isArray(subjectsData.data)) subjectsData = subjectsData.data;
       else if (!Array.isArray(subjectsData)) subjectsData = [];
 
-      // 🔥 FIX REAL AQUÍ
       const subjectNames = subjectsData
         .filter((s) => {
           const teacher = s.Teacher;
 
           if (!teacher) return false;
 
-          // 🧠 CASO 1: Teacher es OBJETO
           if (typeof teacher === "object") {
             return (
               teacher._id === data._id ||
@@ -49,7 +47,6 @@ export const useViewProfessor = () => {
             );
           }
 
-          // 🧠 CASO 2: Teacher es STRING
           if (typeof teacher === "string") {
             return (
               teacher === data.ID ||

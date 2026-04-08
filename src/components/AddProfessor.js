@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { Text, TextInput, View } from "react-native";
 import BottomNav from "../components/BottomNav";
 import { GradientButton } from "../components/GradientButton";
@@ -7,7 +6,6 @@ import { styles } from "../styles/editAddStyle";
 
 const AddProfessorScreen = () => {
   const { professor, setProfessor, onSave, navigateTo } = useAddProfessor();
-  const router = useRouter();
 
   return (
     <View style={styles.container}>
@@ -30,6 +28,7 @@ const AddProfessorScreen = () => {
           placeholderTextColor="#aaa"
           value={professor.id}
           onChangeText={(text) => setProfessor({ ...professor, id: text })}
+          keyboardType="numeric"
           style={styles.input}
         />
 
