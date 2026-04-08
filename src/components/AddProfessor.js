@@ -42,15 +42,6 @@ const AddProfessorScreen = () => {
           style={styles.input}
         />
 
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          placeholder="Enter email"
-          placeholderTextColor="#aaa"
-          value={professor.email}
-          onChangeText={(text) => setProfessor({ ...professor, email: text })}
-          style={styles.input}
-        />
-
       </View>
 
       <GradientButton

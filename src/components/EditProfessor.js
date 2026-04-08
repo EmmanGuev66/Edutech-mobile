@@ -23,15 +23,6 @@ const EditProfessorScreen = () => {
           placeholderTextColor="#aaa"
         />
 
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          value={professor.email}
-          onChangeText={(text) => setProfessor({ ...professor, email: text })}
-          style={styles.input}
-          placeholder="Enter email"
-          placeholderTextColor="#aaa"
-        />
-
         <Text style={styles.label}>Photo URL</Text>
         <TextInput
           value={professor.photo}

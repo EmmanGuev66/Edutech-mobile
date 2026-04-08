@@ -13,7 +13,8 @@ const LoginScreen = () => {
     password,
     setPassword,
     handleLogin,
-    loading
+    loading,
+    errors
   } = useLogin();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -42,7 +43,11 @@ const LoginScreen = () => {
 
             <Text style={styles.cardTitle}>Sign in</Text>
 
-            <View style={[styles.inputContainer, styles.inputGlow]}>
+            <View style={[
+              styles.inputContainer,
+              styles.inputGlow,
+              errors.email && { borderColor: "red" }
+            ]}>
               <Image
                 source={require("../../assets/images/email.png")}
                 style={styles.inputIcon}
@@ -58,7 +63,17 @@ const LoginScreen = () => {
               />
             </View>
 
-            <View style={[styles.inputContainer, styles.inputGlow]}>
+            {errors.email ? (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                {errors.email}
+              </Text>
+            ) : null}
+
+            <View style={[
+              styles.inputContainer,
+              styles.inputGlow,
+              errors.password && { borderColor: "red" }
+            ]}>
               <Image
                 source={require("../../assets/images/lock.png")}
                 style={styles.inputIcon}
@@ -78,6 +93,12 @@ const LoginScreen = () => {
                 </Text>
               </TouchableOpacity>
             </View>
+
+            {errors.password ? (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                {errors.password}
+              </Text>
+            ) : null}
 
             <GradientButton
               title={loading ? "Loading..." : "Sign in"}

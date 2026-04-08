@@ -22,7 +22,6 @@ const EditStudentScreen = () => {
 
       <View style={styles.card}>
 
-        {/* Photo URL */}
         <Text style={styles.label}>Photo URL</Text>
         <TextInput
           value={student.avatar}
@@ -32,7 +31,6 @@ const EditStudentScreen = () => {
           style={styles.input}
         />
 
-        {/* Name */}
         <Text style={styles.label}>Full name</Text>
         <TextInput
           value={student.name}
@@ -40,15 +38,6 @@ const EditStudentScreen = () => {
           style={styles.input}
         />
 
-        {/* Email */}
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          value={student.email}
-          onChangeText={(text) => setStudent({ ...student, email: text })}
-          style={styles.input}
-        />
-
-        {/* Subjects */}
         <Text style={styles.label}>Subjects</Text>
 
         <View style={styles.subjectContainer}>

@@ -9,7 +9,6 @@ export const useEditProfessor = () => {
 
   const [professor, setProfessor] = useState({
     name: "",
-    email: "",
     photo: "",
   });
 
@@ -28,7 +27,6 @@ export const useEditProfessor = () => {
 
       setProfessor({
         name: data.Name || "",
-        email: data.Email || "",
         photo: data.Photo || "",
       });
 
@@ -45,7 +43,6 @@ export const useEditProfessor = () => {
         `/updateTeacher/${id}`,
         {
           Name: professor.name,
-          Email: professor.email,
           Photo: professor.photo,
         },
         {

@@ -1,6 +1,5 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
 import api from "../models/api";
 
@@ -8,27 +7,30 @@ export const useLogin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const [errors, setErrors] = useState({
+        email: "",
+        password: ""
+    });
+
     const router = useRouter();
 
     const handleLogin = async () => {
+        setErrors({ email: "", password: "" });
+
         if (!email || !password) {
-            Alert.alert("Error", "All fields are required");
+            setErrors({
+                email: !email ? "Email is required" : "",
+                password: !password ? "Password is required" : ""
+            });
             return;
         }
 
         if (!StorageService.validate("email", email)) {
-            Alert.alert(
-                "Error",
-                "The type of the email must be ad1234@school.com"
-            );
-            return;
-        }
-
-        if (!StorageService.validate("password", password)) {
-            Alert.alert(
-                "Error",
-                "The password must be 8 characters long and contain uppercase, lowercase, and numbers"
-            );
+            setErrors({
+                email: "Invalid email format (ad1234@school.com)",
+                password: ""
+            });
             return;
         }
 
@@ -58,26 +60,29 @@ export const useLogin = () => {
             router.replace("/home");
 
         } catch (error) {
-            const message =
-                error?.response?.data?.message ||
-                error?.response?.data?.error ||
-                "Connection error";
 
-            try {
-                const cachedUser = await StorageService.getUser();
+            const message = error?.response?.data?.msg || "";
 
-                if (cachedUser) {
-                    Alert.alert("Offline mode", "Logging in with saved data", [
-                        {
-                            text: "OK",
-                            onPress: () => router.replace("/home")
-                        }
-                    ]);
-                    return;
-                }
-            } catch {}
+            if (message.toLowerCase().includes("does not exist")) {
+                setErrors({
+                    email: "Email not found",
+                    password: ""
+                });
+                return;
+            }
 
-            Alert.alert("Error", message);
+            if (message.toLowerCase().includes("incorrect password")) {
+                setErrors({
+                    email: "",
+                    password: "Incorrect password"
+                });
+                return;
+            }
+
+            setErrors({
+                email: "",
+                password: "Connection error"
+            });
 
         } finally {
             setLoading(false);
@@ -90,6 +95,7 @@ export const useLogin = () => {
         password,
         setPassword,
         handleLogin,
-        loading
+        loading,
+        errors
     };
 };

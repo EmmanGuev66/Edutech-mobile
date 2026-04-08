@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
 import api from "../models/api";
 
@@ -9,7 +10,6 @@ export const useAddStudent = () => {
   const [student, setStudent] = useState({
     id: "",
     name: "",
-    email: "",
     avatar: "",
   });
 
@@ -55,15 +55,48 @@ export const useAddStudent = () => {
 
   const onSave = async () => {
     try {
+      if (!student.id) {
+        Alert.alert("Error", "ID is required");
+        return;
+      }
+
       const token = await StorageService.getToken(StorageService.KEYS.TOKEN);
+
+      const checkRes = await api.get("/getAllStudents", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      let data = checkRes.data;
+
+      if (Array.isArray(data)) {
+      } else if (Array.isArray(data.students)) {
+        data = data.students;
+      } else if (Array.isArray(data.data)) {
+        data = data.data;
+      } else {
+        data = [];
+      }
+
+      const exists = data.some(
+        (s) => String(s.ID || s.id) === String(student.id)
+      );
+
+      if (exists) {
+        Alert.alert("Duplicate ID", "This student ID already exists");
+        return;
+      }
+
+      const generatedEmail = `st${student.id}@school.com`;
 
       await api.post(
         "/createStudent",
         {
           ID: student.id,
           Name: student.name,
-          Email: student.email,
-          Photo: student.avatar, // 🔥 FIX
+          Email: generatedEmail,
+          Photo: student.avatar,
           Subjects:
             selectedSubjects.length === 1
               ? selectedSubjects[0]
@@ -80,6 +113,7 @@ export const useAddStudent = () => {
 
     } catch (error) {
       console.log("Error creating student:", error?.response?.data || error);
+      Alert.alert("Error", "Could not create student");
     }
   };
 

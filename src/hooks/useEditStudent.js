@@ -10,7 +10,6 @@ export const useEditStudent = () => {
   const [student, setStudent] = useState({
     id: "",
     name: "",
-    email: "",
     avatar: "",
   });
 
@@ -34,7 +33,6 @@ export const useEditStudent = () => {
       const mapped = {
         id: data.ID || data.id,
         name: data.Name,
-        email: data.Email,
         avatar: data.Photo || "",
       };
 
@@ -65,7 +63,6 @@ export const useEditStudent = () => {
       let data = response.data;
 
       if (Array.isArray(data)) {
-        // ok
       } else if (Array.isArray(data.subjects)) {
         data = data.subjects;
       } else if (Array.isArray(data.data)) {
@@ -98,7 +95,6 @@ export const useEditStudent = () => {
         `/updateStudent/${id}`,
         {
           Name: student.name,
-          Email: student.email,
           Subjects: selectedSubjects,
           Photo: student.avatar,
         },

@@ -1,6 +1,5 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert } from "react-native";
 import StorageService from "../helpers/StorageService";
 import api from "../models/api";
 
@@ -11,41 +10,78 @@ export const useRegister = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const [errors, setErrors] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    });
+
     const router = useRouter();
 
     const handleRegister = async () => {
 
+        // reset errors
+        setErrors({
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: ""
+        });
+
+        // required
         if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-            Alert.alert('Error', 'All fields are required');
+            setErrors({
+                name: !name ? "Name is required" : "",
+                email: !email ? "Email is required" : "",
+                password: !password ? "Password is required" : "",
+                confirmPassword: !confirmPassword ? "Confirm your password" : ""
+            });
             return;
         }
 
+        // name validation
+        if (/\d/.test(name)) {
+            setErrors(prev => ({
+                ...prev,
+                name: "Name cannot contain numbers"
+            }));
+            return;
+        }
+
+        // email role
         if (!email.startsWith("ad")) {
-            Alert.alert(
-                'Invalid role',
-                'Only admin accounts are allowed.\n\nUse format:\nad1234@school.com'
-            );
+            setErrors(prev => ({
+                ...prev,
+                email: "Use admin format: ad1234@school.com"
+            }));
             return;
         }
 
+        // email format
         if (!StorageService.validate('email', email)) {
-            Alert.alert(
-                'Invalid email',
-                'You must register as admin using this format:\n\nadID@school.com\n\nExample: ad1234@school.com'
-            );
+            setErrors(prev => ({
+                ...prev,
+                email: "Invalid email format"
+            }));
             return;
         }
 
+        // password validation
         if (!StorageService.validate('password', password)) {
-            Alert.alert(
-                'Error',
-                'Password must be at least 8 characters long and include uppercase, lowercase, and a number'
-            );
+            setErrors(prev => ({
+                ...prev,
+                password: "Min 8 chars, uppercase, lowercase, number"
+            }));
             return;
         }
 
+        // match passwords
         if (password !== confirmPassword) {
-            Alert.alert('Error', 'Passwords do not match');
+            setErrors(prev => ({
+                ...prev,
+                confirmPassword: "Passwords do not match"
+            }));
             return;
         }
 
@@ -58,21 +94,26 @@ export const useRegister = () => {
                 Password: password
             });
 
-            Alert.alert('Success', 'Admin account created successfully', [
-                {
-                    text: 'Go to login',
-                    onPress: () => router.replace('/')
-                }
-            ]);
+            router.replace("/");
 
         } catch (error) {
 
             const message =
                 error?.response?.data?.message ||
                 error?.response?.data?.error ||
-                'Registration failed';
+                '';
 
-            Alert.alert('Error', message);
+            if (message.toLowerCase().includes('exist')) {
+                setErrors(prev => ({
+                    ...prev,
+                    email: "Account already exists"
+                }));
+            } else {
+                setErrors(prev => ({
+                    ...prev,
+                    email: message || "Account already exists"
+                }));
+            }
 
         } finally {
             setLoading(false);
@@ -85,6 +126,7 @@ export const useRegister = () => {
         password, setPassword,
         confirmPassword, setConfirmPassword,
         handleRegister,
-        loading
+        loading,
+        errors
     };
 };

@@ -48,15 +48,6 @@ const AddStudentScreen = () => {
           style={styles.input}
         />
 
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          placeholder="Enter email"
-          placeholderTextColor="#888"
-          value={student.email}
-          onChangeText={(text) => setStudent({ ...student, email: text })}
-          style={styles.input}
-        />
-
         <Text style={styles.label}>Subjects</Text>
 
         <View style={styles.subjectContainer}>
